@@ -279,3 +279,25 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# ==================
+# MY PROJECT SETTING
+
+# Third-party projects
+third_party/assimp
+third_party/DevIL
+third_party/glew
+third_party/glfw
+third_party/glm
+
+# Binary and Library
+bin/
+lib/
+
+# Resources
+resources/fonts
+resources/images
+resources/models
+
+# Build Files
+build/
