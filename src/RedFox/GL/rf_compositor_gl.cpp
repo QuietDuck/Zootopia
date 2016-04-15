@@ -183,7 +183,7 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
     // BIND MRT FBO.
     glBindFramebuffer(GL_FRAMEBUFFER, _gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    
+
     // DRAW GRID. (HELPER)
     _grid->draw();
 
@@ -210,6 +210,7 @@ void RfCompositorGL::renderUserInterface()
 void RfCompositorGL::postProcess()
 {  
     ZASSERT(_displayShader);
+    ZASSERT(_displayCamera);
 
     // FXAA, SMAA? BLUR?
     // Render output (deferred rendering)
@@ -232,49 +233,47 @@ void RfCompositorGL::postProcess()
 
     /////////////////////////////////////////////////////
 
-    const GLuint NR_LIGHTS = 1;
+    const GLuint NR_LIGHTS = 32;
     std::vector<glm::vec3> lightPositions;
     std::vector<glm::vec3> lightColors;
     srand(13);
     for (GLuint i = 0; i < NR_LIGHTS; i++)
     {
         // Calculate slightly random offsets
-        //GLfloat xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-        //GLfloat yPos = ((rand() % 100) / 100.0) * 6.0 - 4.0;
-        //GLfloat zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
-        GLfloat xPos = 0.0f;
-        GLfloat yPos = 0.0f;
-        GLfloat zPos = 0.0f;
+        GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        GLfloat zPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        //GLfloat xPos = 0.0f;
+        //GLfloat yPos = 10.0f;
+        //GLfloat zPos = 0.0f;
         lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
         // Also calculate random color
-        //GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        //GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        //GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat rColor = 1.0f;
-        GLfloat gColor = 1.0f;
-        GLfloat bColor = 1.0f;
+        GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        //GLfloat rColor = 1.0f;
+        //GLfloat gColor = 1.0f;
+        //GLfloat bColor = 1.0f;
         lightColors.push_back(glm::vec3(rColor, gColor, bColor));
     }
-
-    GLfloat cameraPos[3] = { 0.0f, 0.0f, 0.0f };
 
     for (GLuint i = 0; i < NR_LIGHTS; i++)
     {
         glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Position").c_str()), 1, &lightPositions[i][0]);
         glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Color").c_str()), 1, &lightColors[i][0]);
         // Update attenuation parameters and calculate radius
-        const GLfloat constant = 1.0; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-        const GLfloat linear = 0.7;
-        const GLfloat quadratic = 1.8;
+        const GLfloat constant = 1.0f; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+        const GLfloat linear = 0.07f;
+        const GLfloat quadratic = 0.18f;
         glUniform1f(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Linear").c_str()), linear);
         glUniform1f(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Quadratic").c_str()), quadratic);
         // Then calculate radius of light volume/sphere
         const GLfloat lightThreshold = 5.0; // 5 / 256
         const GLfloat maxBrightness = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
-        GLfloat radius = (-linear + static_cast<float>(std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / lightThreshold) * maxBrightness)))) / (2 * quadratic);
+        const GLfloat radius = (-linear + static_cast<float>(std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / lightThreshold) * maxBrightness)))) / (2 * quadratic);
         glUniform1f(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Radius").c_str()), radius);
     }
-    glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), "viewPos"), 1, &cameraPos[0]);
+    glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), "viewPos"), 1, glm::value_ptr(_displayCamera->getPosition()));
 
     /////////////////////////////////////////////////////
 

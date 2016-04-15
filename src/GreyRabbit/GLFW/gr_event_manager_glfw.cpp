@@ -21,9 +21,8 @@ static RfScalar _lastXpos = 0;
 static RfScalar _lastYpos = 0;
 static RfScalar  _lastFrame = 0;
 static RfScalar  _deltaTime = 0;
-
-/// TEMPORARY
-static RfScalar _moveOffset = 0;
+static bool _keys[GLFW_KEY_LAST];
+static bool _keysPressed[GLFW_KEY_LAST];
 
 GrEventManagerGLFW::GrEventManagerGLFW() {}
 GrEventManagerGLFW::~GrEventManagerGLFW() {}
@@ -36,7 +35,30 @@ GrEventManagerGLFW::~GrEventManagerGLFW() {}
 // KEYBOARD
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    // NOT IMPLEMENTED YET.
+    RfCamera* camera = RfCompositorGL::getCamera();
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if (key >= 0 && key <= GLFW_KEY_LAST)
+    {
+        if (action == GLFW_PRESS)
+            _keys[key] = true;
+        else if (action == GLFW_RELEASE)
+        {
+            _keys[key] = false;
+            _keysPressed[key] = false;
+        }
+    }
+
+    if (key == GLFW_KEY_W && action == GLFW_REPEAT)
+        camera->processKeyboard(RfCamera::Movement::kForward, _deltaTime);
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+        camera->processKeyboard(RfCamera::Movement::kBackward, _deltaTime);
+    if (key == GLFW_KEY_A && action == GLFW_PRESS)
+        camera->processKeyboard(RfCamera::Movement::kLeft, _deltaTime);
+    if (key == GLFW_KEY_D && action == GLFW_PRESS)
+        camera->processKeyboard(RfCamera::Movement::kRight, _deltaTime);
 }
 
 
@@ -53,28 +75,26 @@ void charmods_callback(GLFWwindow* window, unsigned int codepoint, int mods)
 ///////////
 
 
-
+bool firstMouse = true;
 ////////
 // MOUSE
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    //std::cout << xpos << ", " << ypos << std::endl;
-
-    const RfScalar angleY = RfDoubleToScalar(xpos - _lastXpos);
-    const RfScalar angleX = RfDoubleToScalar(ypos - _lastYpos);
-
-    if (_currentState EQ GLFW_PRESS) {
-        //ZLOG_I("MOUSE LEFT BUTTON PRESSING.");
-
-        RfCamera* camera = RfCompositorGL::getCamera();
-        camera->translate(RfVector3(0.0f, 0.0f, 5.0f));
-        camera->rotate(angleY, RfVector3(0, 1, 0));
-        camera->rotate(angleX, RfVector3(1, 0, 0));
-        camera->translate(RfVector3(0.0f, 0.0f, -5.0f));
+    if (firstMouse)
+    {
+        _lastXpos = RfDoubleToScalar(xpos);
+        _lastYpos = RfDoubleToScalar(ypos);
+        firstMouse = false;
     }
+
+    RfScalar xoffset = RfDoubleToScalar(xpos - _lastXpos);
+    RfScalar yoffset = RfDoubleToScalar(_lastYpos - ypos);
 
     _lastXpos = RfDoubleToScalar(xpos);
     _lastYpos = RfDoubleToScalar(ypos);
+
+    RfCamera* camera = RfCompositorGL::getCamera();
+    camera->processMouseMovement(xoffset, yoffset);
 }
 
 
@@ -120,12 +140,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
     //ZLOG_I("MOUSE SCROLLING...");
     //std::cout << xoffset << ", " << yoffset << std::endl;
-
-    const RfScalar moveScale = 0.1f;
-    _moveOffset = RfDoubleToScalar(moveScale * yoffset);
-
     RfCamera* camera = RfCompositorGL::getCamera();
-    camera->translate(RfVector3(0, 0, _moveOffset));
+    camera->processMouseScroll(yoffset);
 }
 
 
@@ -139,6 +155,22 @@ void drop_callback(GLFWwindow* window, int count, const char** paths)
 }
 ////////
 
+
+// TODO: Make clear.
+void doMovement()
+{
+    RfCamera* camera = RfCompositorGL::getCamera();
+
+    // Camera controls
+    if (_keys[GLFW_KEY_W])
+        camera->processKeyboard(RfCamera::Movement::kForward, _deltaTime);
+    if (_keys[GLFW_KEY_S])
+        camera->processKeyboard(RfCamera::Movement::kBackward, _deltaTime);
+    if (_keys[GLFW_KEY_A])
+        camera->processKeyboard(RfCamera::Movement::kLeft, _deltaTime);
+    if (_keys[GLFW_KEY_D])
+        camera->processKeyboard(RfCamera::Movement::kRight, _deltaTime);
+}
 
 
 void GrEventManagerGLFW::initialize() {
@@ -155,7 +187,8 @@ void GrEventManagerGLFW::initialize() {
         glfwSetScrollCallback(_window, scroll_callback);
         glfwSetDropCallback(_window, drop_callback);
 
-        glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        //glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
     else {
         ZABORT("Event Callback can not be initialized. Window must be created first.");
@@ -166,6 +199,7 @@ void GrEventManagerGLFW::initialize() {
 void GrEventManagerGLFW::pollEvents() {
 
     glfwPollEvents();
+    doMovement(); // TODO: Make Clear.
 }
 
 

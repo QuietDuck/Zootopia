@@ -138,12 +138,17 @@ void BcCore::run() {
 
 void BcCore::compositorSetUp()
 {
-    RfCamera* initCamera = new RfCameraGL;
+    RfCamera* initCamera = new RfCameraGL(
+        glm::vec3(-3.0f, 4.0f, 3.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        -45.0f,
+        -20.0f
+        );
 
-    initCamera->setPosition(RfPoint3(3.0f, 4.0f, 0.0f));
-    initCamera->setLookAt(RfPoint3(0.0f, 0.0f, 0.0f));
-    initCamera->setHeadUp(RfCamera::HeadUp::kAxis_Y);
-    initCamera->setPerspective(45.0f, 1280.0f / 960.0f, 1.0f, 100.0f);
+    //initCamera->setPosition(RfPoint3(3.0f, 4.0f, 0.0f));
+    //initCamera->setLookAt(RfPoint3(0.0f, 0.0f, 0.0f));
+    //initCamera->setHeadUp(RfCamera::HeadUp::kAxis_Y);
+    //initCamera->setPerspective(45.0f, 1280.0f / 960.0f, 1.0f, 100.0f);
 
     _compositor->setCamera(initCamera);
 

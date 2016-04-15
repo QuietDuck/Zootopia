@@ -16,6 +16,7 @@ TODO:
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "rf_camera.h"
+#include "rf_scalar.h"
 
 namespace zootopia {
 
@@ -23,30 +24,37 @@ namespace zootopia {
 
     public:
 
-        explicit RfCameraGL();
+        explicit RfCameraGL(
+            glm::vec3 position = glm::vec3(0.0f),
+            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+            RfScalar yaw = -90.0f,
+            RfScalar pitch = 0.0f
+            );
+
         ~RfCameraGL();
 
     public:
 
-        void setPosition(const RfPoint3& position) override;
-        void setLookAt(const RfPoint3& lookAt) override;
-        void setHeadUp(const HeadUp headUp) override;
-        void setPerspective(const RfScalar fovy, const RfScalar aspect, const RfScalar near, const RfScalar far) override;
+        // Override
+        void processKeyboard(Movement direction, RfScalar deltaTime) override;
+        void processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool constrainPitch = true) override;
+        void processMouseScroll(RfScalar yoffset) override;
 
-        glm::mat4 getViewMatrix() const { return _viewMatrix; }
-        glm::mat4 getProjMatrix() const { return _projMatrix; }
-        glm::mat4 getMatrix() const { return _projMatrix * _viewMatrix; }
-
-        // move(): translate.
-        void translate(const RfVector3& translate) override;
-        void rotate(const RfScalar angle, const RfVector3& vector) override;
+        glm::mat4 getMatrix();
+        glm::vec3 getPosition();
 
     private:
 
-        glm::vec3   _position;
-        glm::vec3   _lookAt;
-        glm::vec3   _headUp;
+        void updateVectors() override;
 
+        // Camera Attributes
+        glm::vec3   _position;
+        glm::vec3   _front;
+        glm::vec3   _up;
+        glm::vec3   _right; // weird name...
+        glm::vec3   _worldUp;
+
+        // Camera Matrix
         glm::mat4   _viewMatrix;
         glm::mat4   _projMatrix;
 
