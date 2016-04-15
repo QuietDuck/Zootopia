@@ -32,7 +32,6 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
     }
     // TO GET RID OF GLFW ERROR. (ERROR CODE: 1280)
-    // IT SHOULD BE IGNORED.
     glGetError();
 
     /* Initialize DevIL */
@@ -41,7 +40,6 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     ///////////////////////////////////////////////////////////////
 
     _grid = new RfGridGL;
-
     _deferredShader = new RfShaderGL("shader/glsl/g_buffer.vert", "shader/glsl/g_buffer.frag");
 
     //////////////////////////////////////////////////////////////
@@ -185,7 +183,7 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // DRAW GRID. (HELPER)
-    _grid->draw();
+    //_grid->draw();
 
     // USE DEFERRED SHADER.
     _deferredShader->use();
@@ -233,27 +231,27 @@ void RfCompositorGL::postProcess()
 
     /////////////////////////////////////////////////////
 
-    const GLuint NR_LIGHTS = 32;
+    const GLuint NR_LIGHTS = 3;
     std::vector<glm::vec3> lightPositions;
     std::vector<glm::vec3> lightColors;
     srand(13);
     for (GLuint i = 0; i < NR_LIGHTS; i++)
     {
         // Calculate slightly random offsets
-        GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        GLfloat zPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        //GLfloat xPos = 0.0f;
-        //GLfloat yPos = 10.0f;
-        //GLfloat zPos = 0.0f;
+        //GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        //GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        //GLfloat zPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        GLfloat xPos = -3.0f;
+        GLfloat yPos = 4.0f;
+        GLfloat zPos = 3.0f;
         lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
         // Also calculate random color
-        GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        //GLfloat rColor = 1.0f;
-        //GLfloat gColor = 1.0f;
-        //GLfloat bColor = 1.0f;
+        //GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        //GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        //GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+        GLfloat rColor = 1.0f;
+        GLfloat gColor = 1.0f;
+        GLfloat bColor = 1.0f;
         lightColors.push_back(glm::vec3(rColor, gColor, bColor));
     }
 
@@ -263,8 +261,8 @@ void RfCompositorGL::postProcess()
         glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Color").c_str()), 1, &lightColors[i][0]);
         // Update attenuation parameters and calculate radius
         const GLfloat constant = 1.0f; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-        const GLfloat linear = 0.07f;
-        const GLfloat quadratic = 0.18f;
+        const GLfloat linear = 0.7f / 15.0f;
+        const GLfloat quadratic = 1.8f / 15.0f;
         glUniform1f(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Linear").c_str()), linear);
         glUniform1f(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Quadratic").c_str()), quadratic);
         // Then calculate radius of light volume/sphere

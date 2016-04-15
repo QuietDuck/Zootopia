@@ -48,6 +48,8 @@ void RfCameraGL::processKeyboard(Movement direction, RfScalar deltaTime)
         _position += _right * velocity;
         break;
     }
+
+    _viewMatrix = glm::lookAt(_position, _position + _front, _up);
 }
 
 void RfCameraGL::processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool constrainPitch)
@@ -69,6 +71,8 @@ void RfCameraGL::processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool c
 
     // Update Front, Right and Up Vectors using the updated Eular angles
     updateVectors();
+
+    _viewMatrix = glm::lookAt(_position, _position + _front, _up);
 }
 
 void RfCameraGL::processMouseScroll(RfScalar yoffset)
@@ -81,19 +85,8 @@ void RfCameraGL::processMouseScroll(RfScalar yoffset)
         _zoom = 1.0f;
     if (_zoom >= 45.0f)
         _zoom = 45.0f;
-}
 
-glm::mat4 RfCameraGL::getMatrix()
-{
-    _viewMatrix = glm::lookAt(_position, _position + _front, _up);
     _projMatrix = glm::perspective(glm::radians(_zoom), 1280.0f / 720.0f, 0.1f, 100.0f);
-
-    return _projMatrix * _viewMatrix;
-}
-
-glm::vec3 RfCameraGL::getPosition()
-{
-    return _position;
 }
 
 void RfCameraGL::updateVectors()

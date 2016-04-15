@@ -30,6 +30,9 @@ void BcResourceManager::loadModelFromFile(const std::string &filePath)
     RfModel* testModel1 = new RfModelGL("models/cyborg/cyborg.obj");
     //RfModel* testModel2 = new RfModelGL("models/planet/planet.obj");
     RfModel* testModel2 = new RfModelGL("models/judy/judy.3ds");
+    RfModel* testModel3 = new RfModelGL("models/nanosuit/nanosuit.obj");
+
+    RfModel* testModel4 = new RfModelGL("models/floor/floor.obj");
 
     RfObject* testObject1 = new RfObjectGL(testModel1);
     testObject1->translate(RfPoint3(1, 0, 1));
@@ -42,9 +45,20 @@ void BcResourceManager::loadModelFromFile(const std::string &filePath)
     testObject2->rotate(-45, RfPoint3(0, 1, 0));
     testObject2->rotate(90, RfPoint3(-1, 0, 0));
     //testObject2->rotate(45, RfPoint3(0, 1, 0));
+
+    RfObject* testObject3 = new RfObjectGL(testModel3);
+    testObject3->translate(RfPoint3(2, 0, -2));
+    testObject3->scale(RfPoint3(0.3f, 0.3f, 0.3f));
+    testObject3->rotate(-45, RfPoint3(0, 1, 0));
+
+    RfObject* testObject4 = new RfObjectGL(testModel4);
+    testObject4->scale(RfPoint3(5.0f, 1.0f, 5.0f));
     
     _objects.push_back(testObject1);
     _objects.push_back(testObject2);
+    _objects.push_back(testObject3);
+
+    _objects.push_back(testObject4);
 }
 
 

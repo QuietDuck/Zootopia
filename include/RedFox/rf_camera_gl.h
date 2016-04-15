@@ -40,8 +40,8 @@ namespace zootopia {
         void processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool constrainPitch = true) override;
         void processMouseScroll(RfScalar yoffset) override;
 
-        glm::mat4 getMatrix();
-        glm::vec3 getPosition();
+        glm::mat4 getMatrix() const { return _projMatrix * _viewMatrix; };
+        glm::vec3 getPosition() const { return _position; }
 
     private:
 
