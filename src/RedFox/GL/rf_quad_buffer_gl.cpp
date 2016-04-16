@@ -37,12 +37,15 @@ RfQuadBufferGL::RfQuadBufferGL() :
     glBindVertexArray(0);
 }
 
+
 RfQuadBufferGL::~RfQuadBufferGL() {}
+
 
 void RfQuadBufferGL::initialize()
 {
 
 }
+
 
 void RfQuadBufferGL::destroy()
 {
@@ -59,6 +62,19 @@ void RfQuadBufferGL::destroy()
         ZDELETEZ_SAFE(_quadBuffer);
     }
 }
+
+
+void RfQuadBufferGL::bind()
+{
+    glBindVertexArray(_quadVAO);
+}
+
+
+void zootopia::RfQuadBufferGL::unbind()
+{
+    glBindVertexArray(0);
+}
+
 
 RfQuadBufferGL* RfQuadBufferGL::getBuffer()
 {

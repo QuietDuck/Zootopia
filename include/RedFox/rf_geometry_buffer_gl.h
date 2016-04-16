@@ -9,6 +9,8 @@ RfGeometryBufferGL - Class
 
 #include <GL/glew.h>
 
+#include "rf_size.h"
+
 namespace zootopia {
 
     class RfGeometryBufferGL {
@@ -22,10 +24,12 @@ namespace zootopia {
 
         static RfGeometryBufferGL* getBuffer();
 
-        void initialize();
+        void initialize(const RfSize& fboSize);
+        void resize(const RfSize& fboSize);
         void destroy();
 
-        GLuint getGBufferFBO() const { return _gBufferFBO; }
+        void bind();
+        void unbind();
 
     private:
 

@@ -25,8 +25,9 @@ namespace zootopia {
 
         void initialize(); //?
         void destroy();
-        
-        GLuint getQuadVAO() const { return _quadVAO; }
+
+        void bind();
+        void unbind();
 
     private:
 

@@ -42,6 +42,7 @@ namespace zootopia {
     public:
 
         void initialize(const RfSize& fboSize) override;
+        void resize(const RfSize& fboSize) override;
         void destroy() override;
 
         void prepareFrame(const RfSize& frameSize) override;

@@ -26,6 +26,7 @@ namespace zootopia {
     public:
 
         virtual void    initialize(const RfSize& fboSize) = 0;
+        virtual void    resize(const RfSize& fboSize) = 0;
         virtual void    destroy() = 0;
 
         virtual void    prepareFrame(const RfSize& frameSize) = 0;

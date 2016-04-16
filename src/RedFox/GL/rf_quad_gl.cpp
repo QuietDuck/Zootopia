@@ -20,7 +20,9 @@ RfQuadGL::~RfQuadGL()
 
 void RfQuadGL::draw()
 {
-    glBindVertexArray(_quadBuffer->getQuadVAO());
+    // SET SIZE...
+
+    _quadBuffer->bind();
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
+    _quadBuffer->unbind();
 }

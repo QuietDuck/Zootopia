@@ -93,6 +93,13 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     glViewport(0, 0, width, height);
 }
 
+void RfCompositorGL::resize(const RfSize & fboSize)
+{
+    ZABORT_NOT_IMPLEMENTED();
+
+    // Resize FBO and viewport.
+}
+
 void RfCompositorGL::destroy()
 {
     // DELETE GL BUFFERS.
@@ -111,6 +118,7 @@ void RfCompositorGL::destroy()
     if (_gBuffer NEQ GL_NONE)
         glDeleteBuffers(1, &_gBuffer);
 
+    // DELETE INSTANCES.
     if (_deferredShader) {
         _deferredShader->destroy();
         ZDELETEZ_SAFE(_deferredShader);
