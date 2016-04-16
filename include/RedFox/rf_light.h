@@ -17,7 +17,7 @@ namespace zootopia {
         enum Type {
             kPoint,
             kSpot,
-
+            kDirectional
         };
 
     public:
@@ -25,10 +25,16 @@ namespace zootopia {
         RfLight() {};
         virtual ~RfLight() {};
 
+    public:
+
+
+
     protected:
 
         RfColor     _color;
         RfPoint3    _position;
+
+        Type        _type;
 
     };
 

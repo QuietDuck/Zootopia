@@ -22,6 +22,7 @@
 #include "rf_model_gl.h"
 #include "rf_mesh_gl.h"
 #include "rf_shader_gl.h"
+#include "rf_quad_gl.h"
 
 namespace zootopia {
 
@@ -83,9 +84,8 @@ namespace zootopia {
         // Grid Helper
         RfGridGL*   _grid;
 
-        // TEMPORARY...
-        GLuint      _quadVAO;
-        GLuint      _quadVBO;
+        // Quad Renderer
+        RfQuadGL*   _quad;
 
     };
 

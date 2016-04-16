@@ -1,0 +1,12 @@
+Project Zootopia
+
+TODO List:
+
+MAKE:
+Quad, gBuffer, Light Class.
+
+FIX:
+Model T,S,R issues.
+
+CHANGE:
+Shader Uniform value processing flow.

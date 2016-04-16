@@ -40,6 +40,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     ///////////////////////////////////////////////////////////////
 
     _grid = new RfGridGL;
+    _quad = new RfQuadGL;
     _deferredShader = new RfShaderGL("shader/glsl/g_buffer.vert", "shader/glsl/g_buffer.frag");
 
     //////////////////////////////////////////////////////////////
@@ -87,29 +88,6 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         ZLOG_E("Framebuffer not complete!");
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    ///////////////////////////////////////////////////////////////
-    // temporary (for draw quad)
-    ///////////////////////////////////////////////////////////////
-
-    GLfloat quadVertices[] = {
-        // Positions        // Texture Coords
-        -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-    };
-
-    // Setup plane VAO
-    glGenVertexArrays(1, &_quadVAO);
-    glGenBuffers(1, &_quadVBO);
-    glBindVertexArray(_quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, _quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-
     //////////////////////////////////////////////////////
 
     glViewport(0, 0, width, height);
@@ -118,19 +96,19 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
 void RfCompositorGL::destroy()
 {
     // DELETE GL BUFFERS.
-    if (_rboDepth NEQ 0)
+    if (_rboDepth NEQ GL_NONE)
         glDeleteBuffers(1, &_rboDepth);
 
-    if (_gPosition NEQ 0)
+    if (_gPosition NEQ GL_NONE)
         glDeleteTextures(1, &_gPosition);
 
-    if (_gNormal NEQ 0)
+    if (_gNormal NEQ GL_NONE)
         glDeleteTextures(1, &_gNormal);
 
-    if (_gAlbedoSpec NEQ 0)
+    if (_gAlbedoSpec NEQ GL_NONE)
         glDeleteTextures(1, &_gAlbedoSpec);
 
-    if (_gBuffer NEQ 0)
+    if (_gBuffer NEQ GL_NONE)
         glDeleteBuffers(1, &_gBuffer);
 
     if (_deferredShader) {
@@ -152,7 +130,9 @@ void RfCompositorGL::destroy()
         _grid->destroy();
         ZDELETEZ_SAFE(_grid);
     }
-    
+    if (_quad) {
+        ZDELETEZ_SAFE(_quad);
+    }
 }
 
 void RfCompositorGL::prepareFrame(const RfSize& frameSize)
@@ -181,6 +161,7 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
     // BIND MRT FBO.
     glBindFramebuffer(GL_FRAMEBUFFER, _gBuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDisable(GL_BLEND); // IT SHOULD BE CALLED.
 
     // DRAW GRID. (HELPER)
     //_grid->draw();
@@ -210,16 +191,15 @@ void RfCompositorGL::postProcess()
     ZASSERT(_displayShader);
     ZASSERT(_displayCamera);
 
-    // FXAA, SMAA? BLUR?
     // Render output (deferred rendering)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Use shader
     _displayShader->use();
-    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
-    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
-    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
+    //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
+    //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
+    //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
 
     // RENDER OUTPUT (QUAD TEXTURE)
     glActiveTexture(GL_TEXTURE0);
@@ -235,8 +215,8 @@ void RfCompositorGL::postProcess()
     std::vector<glm::vec3> lightPositions;
     std::vector<glm::vec3> lightColors;
     srand(13);
-    for (GLuint i = 0; i < NR_LIGHTS; i++)
-    {
+    for (GLuint i = 0; i < NR_LIGHTS; i++) {
+
         // Calculate slightly random offsets
         //GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
         //GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
@@ -255,8 +235,8 @@ void RfCompositorGL::postProcess()
         lightColors.push_back(glm::vec3(rColor, gColor, bColor));
     }
 
-    for (GLuint i = 0; i < NR_LIGHTS; i++)
-    {
+    for (GLuint i = 0; i < NR_LIGHTS; i++) {
+
         glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Position").c_str()), 1, &lightPositions[i][0]);
         glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), ("lights[" + std::to_string(i) + "].Color").c_str()), 1, &lightColors[i][0]);
         // Update attenuation parameters and calculate radius
@@ -275,9 +255,7 @@ void RfCompositorGL::postProcess()
 
     /////////////////////////////////////////////////////
 
-    glBindVertexArray(_quadVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
+    _quad->draw();
 }
 
 void RfCompositorGL::finishFrame()
@@ -295,6 +273,12 @@ void RfCompositorGL::setShader(RfShader* shader)
     ZASSERT(shader);
 
     _displayShader = static_cast<RfShaderGL*>(shader);
+
+    /// TEMPORARY... 
+    _displayShader->use();
+    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
+    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
+    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
 }
 
 void RfCompositorGL::setCamera(RfCamera* camera)

@@ -1,6 +1,6 @@
 Project Zootopia
 
-> RedFox - Renderer
+> RedFox - Renderer, Math calculation
 > GreyRabbit - Event, Animation, Window Manager
 > BlueCat - Resource Manager, Core
 

@@ -41,15 +41,15 @@ void main()
     
     // And the diffuse per-fragment color
     vec3 _albedo = texture(texture_diffuse1, fs_in.TexCoords).rgb;
-    //if (_albedo.r == 0.0 && _albedo.g == 0.0 && _albedo.b == 0.0)
-    //    _albedo += material.diffuse;
+    if (_albedo.r == 0.0 && _albedo.g == 0.0 && _albedo.b == 0.0)
+        _albedo += material.diffuse;
     
     gAlbedoSpec.rgb = _albedo;
 
     // Store specular intensity in gAlbedoSpec's alpha component
     float _alpha = texture(texture_specular1, fs_in.TexCoords).r;
-    //if (_alpha == 0.0)
-        //_alpha = material.specular.r;
+    if (_alpha == 0.0)
+        _alpha = material.specular.r;
     
     gAlbedoSpec.a = _alpha;
 }

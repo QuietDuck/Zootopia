@@ -28,8 +28,8 @@ BcCore::BcCore() :
 BcCore::~BcCore() {}
 
 // Core is single-tone pattern.
-BcCore* BcCore::getInstance() {
-
+BcCore* BcCore::getInstance()
+{
     if (bc_core) {
         return bc_core;
     }
@@ -39,8 +39,8 @@ BcCore* BcCore::getInstance() {
     }
 }
 
-void BcCore::terminate() {
-
+void BcCore::terminate()
+{
     if (_windowManager) {
         _windowManager->terminate();
         ZDELETEZ_SAFE(_windowManager);
@@ -66,8 +66,8 @@ void BcCore::terminate() {
     }
 }
 
-void BcCore::initialize(BackendType backendType) {
-
+void BcCore::initialize(BackendType backendType)\
+{
     _backendType = backendType;
     
     switch (backendType) {
@@ -118,8 +118,8 @@ void BcCore::initialize(BackendType backendType) {
     }
 }
 
-void BcCore::run() {
-
+void BcCore::run()
+{
     std::vector<RfObject*> objects = _resourceManager->getObjects();
 
     while (!_windowManager->shouldClose()) {
@@ -136,6 +136,7 @@ void BcCore::run() {
     }
 }
 
+/// TEMPORARY...
 void BcCore::compositorSetUp()
 {
     RfCamera* initCamera = new RfCameraGL(
@@ -145,14 +146,8 @@ void BcCore::compositorSetUp()
         -20.0f
         );
 
-    //initCamera->setPosition(RfPoint3(3.0f, 4.0f, 0.0f));
-    //initCamera->setLookAt(RfPoint3(0.0f, 0.0f, 0.0f));
-    //initCamera->setHeadUp(RfCamera::HeadUp::kAxis_Y);
-    //initCamera->setPerspective(45.0f, 1280.0f / 960.0f, 1.0f, 100.0f);
-
     _compositor->setCamera(initCamera);
 
-    //RfShader* initShader = new RfShaderGL("shader/glsl/quad_tex.vert", "shader/glsl/quad_tex.frag");
     RfShader* initShader = new RfShaderGL("shader/glsl/deferred_shading.vert", "shader/glsl/deferred_shading.frag");
 
     _compositor->setShader(initShader);

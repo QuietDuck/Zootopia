@@ -43,43 +43,59 @@ void RfMeshGL::draw()
     GLuint normalNr = 1;
     GLuint heightNr = 1;
 
-    for (GLuint i = 0; i < _textures.size(); i++) {
+    if (_textures.empty()) {
 
-        // TODO: Optimize.
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+            "material.diffuse"),
+            _materials.diffuse.r,
+            _materials.diffuse.g,
+            _materials.diffuse.b);
 
-        glActiveTexture(GL_TEXTURE0 + i); // Active proper texture unit before binding
-                                          // Retrieve texture number (the N in diffuse_textureN)
-        std::stringstream ss;
-        std::string number;
-        std::string name = _textures[i].type;
-        if (name == "texture_diffuse")
-            ss << diffuseNr++; // Transfer GLuint to stream
-        else if (name == "texture_specular")
-            ss << specularNr++; // Transfer GLuint to stream
-        else if (name == "texture_normal")
-            ss << normalNr++; // Transfer GLuint to stream
-        else if (name == "texture_height")
-            ss << heightNr++; // Transfer GLuint to stream
-        number = ss.str();
-
-        // Now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(), (name + number).c_str()), i);
-        // And finally bind the texture
-        glBindTexture(GL_TEXTURE_2D, _textures[i].id);
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+            "material.specular"),
+            _materials.specular.r,
+            _materials.specular.g,
+            _materials.specular.b);
     }
-    //*
-    glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(), 
-        "material.diffuse"), 
-        _materials.diffuse.r,
-        _materials.diffuse.g,
-        _materials.diffuse.b);
+    else {
 
-    glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
-        "material.specular"),
-        _materials.specular.r,
-        _materials.specular.g,
-        _materials.specular.b);
-    //*/
+        for (GLuint i = 0; i < _textures.size(); i++) {
+
+            // TODO: Optimize.
+
+            glActiveTexture(GL_TEXTURE0 + i); // Active proper texture unit before binding
+                                              // Retrieve texture number (the N in diffuse_textureN)
+            std::stringstream ss;
+            std::string number;
+            std::string name = _textures[i].type;
+            if (name == "texture_diffuse")
+                ss << diffuseNr++; // Transfer GLuint to stream
+            else if (name == "texture_specular")
+                ss << specularNr++; // Transfer GLuint to stream
+            else if (name == "texture_normal")
+                ss << normalNr++; // Transfer GLuint to stream
+            else if (name == "texture_height")
+                ss << heightNr++; // Transfer GLuint to stream
+            number = ss.str();
+
+            // Now set the sampler to the correct texture unit
+            glUniform1i(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(), (name + number).c_str()), i);
+            // And finally bind the texture
+            glBindTexture(GL_TEXTURE_2D, _textures[i].id);
+        }
+
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+            "material.diffuse"),
+            0.0f,
+            0.0f,
+            0.0f);
+
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+            "material.specular"),
+            0.0f,
+            0.0f,
+            0.0f);
+    }
 
     // Draw mesh
     glBindVertexArray(_VAO);
