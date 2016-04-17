@@ -14,12 +14,6 @@ namespace zootopia {
 
     class RfLight {
 
-        enum Type {
-            kPoint,
-            kSpot,
-            kDirectional
-        };
-
     public:
 
         RfLight() {};
@@ -27,14 +21,25 @@ namespace zootopia {
 
     public:
 
+        enum Type {
+            kPoint,
+            kSpot,
+            kDirectional
+        };
 
+        void setColor(RfColor color) { 
+            _color = color; 
+        };
+
+        RfColor getColor() const {
+            return _color;
+        }
+
+        virtual Type getType() const = 0;
 
     protected:
 
         RfColor     _color;
-        RfPoint3    _position;
-
-        Type        _type;
 
     };
 

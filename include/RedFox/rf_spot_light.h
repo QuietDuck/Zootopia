@@ -26,6 +26,8 @@ namespace zootopia {
 
     private:
 
+        RfPoint3    _position;
+
         RfVector3   _direction;
         RfScalar    _cutOff;
 

@@ -31,8 +31,12 @@ void BcResourceManager::loadModelFromFile(const std::string &filePath)
     //RfModel* testModel2 = new RfModelGL("models/planet/planet.obj");
     RfModel* testModel2 = new RfModelGL("models/judy/judy.3ds");
     RfModel* testModel3 = new RfModelGL("models/nanosuit/nanosuit.obj");
-
     RfModel* testModel4 = new RfModelGL("models/floor/floor.obj");
+
+    _models.push_back(testModel1);
+    _models.push_back(testModel2);
+    _models.push_back(testModel3);
+    _models.push_back(testModel4);
 
     RfObject* testObject1 = new RfObjectGL(testModel1);
     testObject1->translate(RfPoint3(1, 0, 1));
@@ -114,4 +118,7 @@ void BcResourceManager::deleteResources()
 {
     for (auto object : _objects)
         ZDELETEZ_SAFE(object);
+
+    for (auto model : _models)
+        ZDELETEZ_SAFE(model);
 }

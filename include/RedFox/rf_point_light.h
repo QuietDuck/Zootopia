@@ -16,19 +16,30 @@ namespace zootopia {
 
     public:
 
-        RfPointLight();
+        RfPointLight(const RfColor& color, const RfPoint3& position);
         ~RfPointLight();
 
     public:
 
+        void setPosition(const RfPoint3& position);
+        void setProperties(const RfScalar constant, const RfScalar linear, const RfScalar quadratic);
 
+        RfScalar getRadius() { return _radius; }
+        Type getType() const override { return Type::kPoint; };
 
     private:
+
+        void calculateRadius();
+
+        RfPoint3    _position;
 
         RfScalar    _constant;
         RfScalar    _linear;
         RfScalar    _quadratic;
 
+        RfScalar    _threshold;
+        RfScalar    _maxBrightness;
+        RfScalar    _radius;
     };
 
 }

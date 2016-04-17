@@ -295,3 +295,38 @@ void RfCompositorGL::setCamera(RfCamera* camera)
 
     _displayCamera = static_cast<RfCameraGL*>(camera);
 }
+
+void RfCompositorGL::setLights(const std::vector<RfLight*>& lights)
+{
+    for (auto light : lights) {
+
+        switch (light->getType()) {
+
+        case RfLight::Type::kDirectional: {
+
+            RfDirectionalLight* directionalLight = static_cast<RfDirectionalLight*>(light);
+            _directionalLights.push_back(directionalLight);
+            break;
+        }
+
+        case RfLight::Type::kPoint: {
+
+            RfPointLight* pointLight = static_cast<RfPointLight*>(light);
+            _pointLights.push_back(pointLight);
+            break;
+        }
+
+        case RfLight::Type::kSpot: {
+
+            RfSpotLight* spotLight = static_cast<RfSpotLight*>(light);
+            _spotLights.push_back(spotLight);
+            break;
+        }    
+
+        default:
+
+            ZLOG_I("");
+            ZABORT("Unexpected Process");
+        }
+    }
+}

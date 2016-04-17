@@ -37,6 +37,7 @@ namespace zootopia {
         void getFilesInDirectory(std::vector<std::string> &out, const std::string &directory);
 
         std::vector<RfObject*>  _objects;
+        std::vector<RfModel*>   _models;
 
     };
 

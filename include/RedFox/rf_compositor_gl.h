@@ -16,6 +16,11 @@
 #include "rf_shader.h"
 #include "rf_camera.h"
 
+#include "rf_light.h"
+#include "rf_point_light.h"
+#include "rf_directional_light.h"
+#include "rf_spot_light.h"
+
 #include "rf_camera_gl.h"
 #include "rf_grid_gl.h"
 #include "rf_object_gl.h"
@@ -57,6 +62,7 @@ namespace zootopia {
 
         void setShader(RfShader* shader) override;
         void setCamera(RfCamera* camera) override;
+        void setLights(const std::vector<RfLight*>& lights) override;
 
         static RfCameraGL* getCamera() { return _displayCamera; }
 
@@ -87,6 +93,11 @@ namespace zootopia {
 
         // Quad Renderer
         RfQuadGL*   _quad;
+
+        // Light
+        std::vector<RfPointLight*>          _pointLights;
+        std::vector<RfDirectionalLight*>    _directionalLights;
+        std::vector<RfSpotLight*>           _spotLights;
 
     };
 

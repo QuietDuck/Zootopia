@@ -13,6 +13,7 @@ RfCompositor - Interface
 #include "rf_size.h"
 #include "rf_shader.h"
 #include "rf_camera.h"
+#include "rf_light.h"
 
 namespace zootopia {
 
@@ -41,6 +42,7 @@ namespace zootopia {
 
         virtual void    setShader(RfShader* shader) = 0;
         virtual void    setCamera(RfCamera* camera) = 0;
+        virtual void    setLights(const std::vector<RfLight*>& lights) = 0;
 
     };
 

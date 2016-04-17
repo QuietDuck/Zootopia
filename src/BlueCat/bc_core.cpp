@@ -139,16 +139,18 @@ void BcCore::run()
 /// TEMPORARY...
 void BcCore::compositorSetUp()
 {
+    // CAMERA
     RfCamera* initCamera = new RfCameraGL(
         glm::vec3(-3.0f, 4.0f, 3.0f),
         glm::vec3(0.0f, 1.0f, 0.0f),
         -45.0f,
-        -20.0f
-        );
-
+        -20.0f);
     _compositor->setCamera(initCamera);
 
+    // SHADER
     RfShader* initShader = new RfShaderGL("shader/glsl/deferred_shading.vert", "shader/glsl/deferred_shading.frag");
-
     _compositor->setShader(initShader);
+
+    // LIGHTS
+
 }
