@@ -10,3 +10,6 @@ Model T,S,R issues.
 
 CHANGE:
 Shader Uniform value processing flow.
+
+ADD:
+GoogleTest, Doxygen setting.

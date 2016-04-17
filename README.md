@@ -29,8 +29,8 @@ Project Zootopia
 ###CURRENT STATUS
 
 #####Deferred rendering.
-![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/WIP/1.png)
+![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/1.png)
 
 
 #####Normal mapping.
-![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/WIP/2.png)
+![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/2.png)
