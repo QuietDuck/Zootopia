@@ -15,14 +15,14 @@ Project Zootopia
 
 
 ###Backend
-* OpenGL(up to 4.5 version), DirectX(later...)
+* OpenGL(4.3+), DirectX(later...)
 
 ####3rd Party
-+ assimp
-+ DevIL
-+ glew
-+ glfw
-+ glm
++ assimp 3.2
++ DevIL 1.7.8
++ glew 1.13.0
++ glfw 3.1.2
++ glm 0.9.7.2
 
 
 
