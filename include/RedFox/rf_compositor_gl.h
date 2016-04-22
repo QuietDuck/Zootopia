@@ -21,6 +21,7 @@
 #include "rf_directional_light.h"
 #include "rf_spot_light.h"
 
+#include "rf_light_manager_gl.h"
 #include "rf_camera_gl.h"
 #include "rf_grid_gl.h"
 #include "rf_object_gl.h"
@@ -28,6 +29,7 @@
 #include "rf_mesh_gl.h"
 #include "rf_shader_gl.h"
 #include "rf_quad_gl.h"
+#include "rf_geometry_buffer_gl.h"
 
 namespace zootopia {
 
@@ -68,17 +70,13 @@ namespace zootopia {
 
     private:
 
+        RfGeometryBufferGL* _gBuffer;
+
         // framebuffer
         GLuint          _hitTestFBO;
-        GLuint          _gBuffer;
-
-        // texture
-        GLuint          _gPosition;
-        GLuint          _gNormal;
-        GLuint          _gAlbedoSpec;
-
-        // renderbuffer
-        GLuint          _rboDepth;
+        
+        // test
+        GLuint          ssbo;
 
         // Shader
         RfShaderGL*         _displayShader;
@@ -98,6 +96,8 @@ namespace zootopia {
         std::vector<RfPointLight*>          _pointLights;
         std::vector<RfDirectionalLight*>    _directionalLights;
         std::vector<RfSpotLight*>           _spotLights;
+
+        RfLightManagerGL* _lightManager;
 
     };
 

@@ -31,11 +31,21 @@ namespace zootopia {
         void bind();
         void unbind();
 
+        GLuint getPositionOutputTextureID() const { return _gPosition; }
+        GLuint getNormalOutputTextureID() const { return _gNormal; }
+        GLuint getAlbedoSpecOutputTextureID() const { return _gAlbedoSpec; }
+
     private:
 
         static RfGeometryBufferGL* _gBuffer;
 
         GLuint  _gBufferFBO;
+
+        GLuint  _gPosition;
+        GLuint  _gNormal;
+        GLuint  _gAlbedoSpec;
+
+        GLuint  _rboDepth;
 
     };
 

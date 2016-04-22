@@ -4,7 +4,7 @@
 #define __RF_RECT_H__
 
 #include "rf_scalar.h"
-#include "rf_point.h"
+#include "rf_point2.h"
 #include "rf_size.h"
 
 namespace zootopia {
@@ -17,7 +17,7 @@ namespace zootopia {
 
         RfRect(RfScalar x, RfScalar y, RfScalar w, RfScalar h) : origin(x, y), size(w, h) {};
         RfRect(RfScalar x, RfScalar y, const RfSize& size_) : origin(x, y), size(size_) {};
-        RfRect(const RfPoint& origin_, RfScalar w, RfScalar h) : origin(origin_), size(w, h) {};
+        RfRect(const RfPoint2& origin_, RfScalar w, RfScalar h) : origin(origin_), size(w, h) {};
 
         RfRect(const RfRect& rhs) {
             origin = rhs.origin;
@@ -46,8 +46,8 @@ namespace zootopia {
 
     public:
 
-        RfPoint	origin;
-        RfSize	size;
+        RfPoint2    origin;
+        RfSize      size;
 
     };
 

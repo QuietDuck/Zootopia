@@ -20,6 +20,7 @@ RfMeshGL - Class
 
 // INTERFACE
 #include "rf_mesh.h"
+#include "rf_noncopyable.h"
 
 // OTHER INTERFACE OR CLASS
 #include "rf_mesh_gl.h"

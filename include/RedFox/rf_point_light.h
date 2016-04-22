@@ -1,45 +1,58 @@
 #pragma once
 
 /*
-RfPointLight - Class
+RfPointLight - Interface
 */
 
 #ifndef __RF_POINT_LIGHT_H__
 #define __RF_POINT_LIGHT_H__
 
 #include "rf_light.h"
+
 #include "rf_scalar.h"
+#include "rf_color.h"
+#include "rf_point3.h"
+#include "rf_point4.h"
+
+#include "zpd.h"
 
 namespace zootopia {
 
     class RfPointLight : public RfLight {
 
-    public:
-
-        RfPointLight(const RfColor& color, const RfPoint3& position);
-        ~RfPointLight();
+        friend class RfLightManager;
 
     public:
 
-        void setPosition(const RfPoint3& position);
-        void setProperties(const RfScalar constant, const RfScalar linear, const RfScalar quadratic);
+        RfPointLight() {}
+        virtual ~RfPointLight() {}
 
-        RfScalar getRadius() { return _radius; }
-        Type getType() const override { return Type::kPoint; };
+    public:
 
-    private:
+        virtual void setPosition(const RfPoint3& position) = 0;
+        virtual void setColor(const RfColor& color) = 0;
+        virtual void setProperties(const RfScalar linear, const RfScalar quadratic) = 0;
 
-        void calculateRadius();
+        Type getType() const override { return Type::kPoint; }
 
-        RfPoint3    _position;
+    protected:
 
-        RfScalar    _constant;
-        RfScalar    _linear;
-        RfScalar    _quadratic;
+        struct Data {
 
-        RfScalar    _threshold;
-        RfScalar    _maxBrightness;
-        RfScalar    _radius;
+            RfPoint3 position;
+            uint32 pad_1;
+
+            RfVector3 color; // color has index value in 4th element (alpha)
+            uint32 index;
+
+            RfScalar linear;
+            RfScalar quadratic;
+            RfScalar radius;
+            uint32 pad_2;
+        };
+
+        Data  _values;
+
     };
 
 }

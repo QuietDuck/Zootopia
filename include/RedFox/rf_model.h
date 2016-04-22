@@ -14,10 +14,11 @@ RfModel - Interface
 #include <assimp/postprocess.h>
 
 #include "rf_shader.h"
+#include "rf_noncopyable.h"
 
 namespace zootopia {
 
-    class RfModel {
+    class RfModel : private RfNoncopyable {
 
     public:
 

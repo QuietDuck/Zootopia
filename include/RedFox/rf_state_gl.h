@@ -14,7 +14,7 @@ namespace RfStateGL {
     GLenum errorCheckGL(char* fileName, char* funcName, int lineNumb);
 }
 
-#define GL_CHECK_ERROR() \
+#define RF_GL_CHECK_ERROR() \
 	RfStateGL::errorCheckGL(__xfilename__, __xfuncname__, __xlinenumber__)
 
 #endif

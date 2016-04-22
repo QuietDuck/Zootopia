@@ -6,6 +6,8 @@ RfQuadBufferGL - Implementation.
 
 #include <GL/glew.h>
 
+#include "rf_state_gl.h"
+
 using namespace zootopia;
 
 // SINGLE-TONE CLASS
@@ -35,6 +37,8 @@ RfQuadBufferGL::RfQuadBufferGL() :
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 
     glBindVertexArray(0);
+
+    RF_GL_CHECK_ERROR();
 }
 
 
@@ -43,7 +47,7 @@ RfQuadBufferGL::~RfQuadBufferGL() {}
 
 void RfQuadBufferGL::initialize()
 {
-
+    RF_GL_CHECK_ERROR();
 }
 
 
@@ -61,18 +65,24 @@ void RfQuadBufferGL::destroy()
     if (_quadBuffer) {
         ZDELETEZ_SAFE(_quadBuffer);
     }
+
+    RF_GL_CHECK_ERROR();
 }
 
 
 void RfQuadBufferGL::bind()
 {
     glBindVertexArray(_quadVAO);
+
+    RF_GL_CHECK_ERROR();
 }
 
 
 void zootopia::RfQuadBufferGL::unbind()
 {
-    glBindVertexArray(0);
+    glBindVertexArray(GL_NONE);
+
+    RF_GL_CHECK_ERROR();
 }
 
 

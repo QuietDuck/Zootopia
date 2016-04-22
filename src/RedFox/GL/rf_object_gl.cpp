@@ -6,8 +6,9 @@ RfObjectGL - Implementation
 
 #include "rf_point3.h"
 #include "rf_scalar.h"
-#include "rf_point.h"
+#include "rf_point2.h"
 
+#include "rf_state_gl.h"
 #include "rf_compositor_gl.h"
 
 using namespace zootopia;
@@ -70,6 +71,8 @@ void RfObjectGL::draw()
         glm::value_ptr(_modelMatrix));
 
     _model->draw();
+
+    RF_GL_CHECK_ERROR();
 }
 
 void RfObjectGL::destroy()

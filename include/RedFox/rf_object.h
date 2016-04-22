@@ -8,7 +8,7 @@ RfObject - Interface
 #define __RF_OBJECT_H__
 
 #include "rf_scalar.h"
-#include "rf_point.h"
+#include "rf_point2.h"
 #include "rf_point3.h"
 #include "rf_texture.h"
 #include "rf_mesh.h"

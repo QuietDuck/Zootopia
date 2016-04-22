@@ -25,12 +25,14 @@ Project Zootopia
 + glm 0.9.7.2
 
 
+***
+
 
 ###CURRENT STATUS
 
-#####Deferred rendering.
+#####- Deferred rendering.
 ![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/1.png)
 
 
-#####Normal mapping.
+#####- Normal mapping.
 ![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/2.png)

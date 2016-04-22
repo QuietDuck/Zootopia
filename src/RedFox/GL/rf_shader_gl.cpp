@@ -1,10 +1,15 @@
+/*
+RfShaderGL - Implementation
+*/
+#include "rf_shader_gl.h"
+#include "zpd.h"
+
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include "rf_shader_gl.h"
-#include "zpd.h"
+#include "rf_state_gl.h"
 
 #define USE_OLD_VERSION 0
 
@@ -124,7 +129,7 @@ RfShaderGL::RfShaderGL(
 
 RfShaderGL::~RfShaderGL() {}
 
-void RfShaderGL::checkCompileErrors(GLuint shader, std::string type)
+void RfShaderGL::_checkCompileErrors(GLuint shader, std::string type)
 {
     // NOT IMPLEMENTED
 }
@@ -200,13 +205,13 @@ RfShaderGL::RfShaderGL(
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
-    checkCompileErrors(vertex, "VERTEX");
+    _checkCompileErrors(vertex, "VERTEX");
 
     // Fragment Shader
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
-    checkCompileErrors(fragment, "FRAGMENT");
+    _checkCompileErrors(fragment, "FRAGMENT");
 
     // If geometry shader is given, compile geometry shader
     GLuint geometry;
@@ -216,7 +221,7 @@ RfShaderGL::RfShaderGL(
         geometry = glCreateShader(GL_GEOMETRY_SHADER);
         glShaderSource(geometry, 1, &gShaderCode, NULL);
         glCompileShader(geometry);
-        checkCompileErrors(geometry, "GEOMETRY");
+        _checkCompileErrors(geometry, "GEOMETRY");
     }
 
     // Shader Program
@@ -226,18 +231,20 @@ RfShaderGL::RfShaderGL(
     if (geometryPath != nullptr)
         glAttachShader(_shaderProgObj, geometry);
     glLinkProgram(_shaderProgObj);
-    checkCompileErrors(_shaderProgObj, "PROGRAM");
+    _checkCompileErrors(_shaderProgObj, "PROGRAM");
 
     // Delete the shaders as they're linked into our program now and no longer necessery
     glDeleteShader(vertex);
     glDeleteShader(fragment);
     if (geometryPath != nullptr)
         glDeleteShader(geometry);
+
+    RF_GL_CHECK_ERROR();
 }
 
 RfShaderGL::~RfShaderGL() {}
 
-void RfShaderGL::checkCompileErrors(GLuint shader, std::string type)
+void RfShaderGL::_checkCompileErrors(GLuint shader, std::string type)
 {
     GLint success;
     GLchar infoLog[1024];
@@ -259,16 +266,22 @@ void RfShaderGL::checkCompileErrors(GLuint shader, std::string type)
             std::cout << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n" << infoLog << "\n|-------------------------------------------------------|" << std::endl;
         }
     }
+
+    RF_GL_CHECK_ERROR();
 }
 
 void RfShaderGL::use() {
 
     glUseProgram(_shaderProgObj);
+
+    RF_GL_CHECK_ERROR();
 }
 
 void RfShaderGL::destroy() {
 
     glDeleteProgram(_shaderProgObj);
+
+    RF_GL_CHECK_ERROR();
 }
 
 #endif

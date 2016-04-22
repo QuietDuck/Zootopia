@@ -41,14 +41,6 @@ BcCore* BcCore::getInstance()
 
 void BcCore::terminate()
 {
-    if (_windowManager) {
-        _windowManager->terminate();
-        ZDELETEZ_SAFE(_windowManager);
-    }
-    if (_eventManager) {
-        //_eventManager->destroy();
-        ZDELETEZ_SAFE(_eventManager);
-    }
 
     if (_resourceManager) {
         _resourceManager->deleteResources();
@@ -58,6 +50,15 @@ void BcCore::terminate()
     if (_compositor) {
         _compositor->destroy();
         ZDELETEZ_SAFE(_compositor);
+    }
+
+    if (_windowManager) {
+        _windowManager->terminate();
+        ZDELETEZ_SAFE(_windowManager);
+    }
+    if (_eventManager) {
+        //_eventManager->destroy();
+        ZDELETEZ_SAFE(_eventManager);
     }
 
     // DELETE ITSELF.

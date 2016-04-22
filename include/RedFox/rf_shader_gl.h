@@ -14,7 +14,7 @@ RfShaderGL - Class
 
 namespace zootopia {
 
-    class RfShaderGL : public RfShader{
+    class RfShaderGL : public RfShader {
 
     public:
 
@@ -33,7 +33,7 @@ namespace zootopia {
 
     private:
 
-        void checkCompileErrors(GLuint shader, std::string type);
+        void _checkCompileErrors(GLuint shader, std::string type);
 
         GLuint      _shaderProgObj;
 

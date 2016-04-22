@@ -4,6 +4,7 @@ RfQuadGL - Implementation
 #include "rf_quad_gl.h"
 #include "zpd.h"
 
+#include "rf_state_gl.h"
 #include "rf_quad_buffer_gl.h"
 
 using namespace zootopia;
@@ -25,4 +26,6 @@ void RfQuadGL::draw()
     _quadBuffer->bind();
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     _quadBuffer->unbind();
+
+    RF_GL_CHECK_ERROR();
 }

@@ -11,6 +11,7 @@ RfModelGL - Class
 
 #include "rf_model.h"
 #include "rf_shader.h"
+#include "rf_noncopyable.h"
 
 #include "rf_mesh_gl.h"
 
@@ -32,7 +33,7 @@ namespace zootopia {
         void        loadModel(const std::string& path) override;
         void        processNode(aiNode* node, const aiScene* scene) override;
         
-        RfMeshGL    processMesh(aiMesh* mesh, const aiScene* scene);
+        RfMeshGL*   processMesh(aiMesh* mesh, const aiScene* scene);
         GLint       textureFromFile(const char* path, std::string directory);
 
         std::vector<TextureGL>  loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
@@ -40,7 +41,7 @@ namespace zootopia {
     private:
 
         std::vector<TextureGL>  _texturesLoaded;	// Stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-        std::vector<RfMeshGL>   _meshes;
+        std::vector<RfMeshGL*>  _meshes;
         std::string             _directory;
         bool                    _gammaCorrection;
 

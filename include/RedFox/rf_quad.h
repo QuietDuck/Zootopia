@@ -7,7 +7,7 @@ RfQuad - Interface
 #ifndef __RF_QUAD_H__
 #define __RF_QUAD_H__
 
-#include "rf_point.h"
+#include "rf_point2.h"
 #include "rf_size.h"
 
 namespace zootopia {
@@ -25,7 +25,7 @@ namespace zootopia {
 
     protected:
 
-        RfPoint     _position;
+        RfPoint2    _position;
         RfSize      _size;
 
     };

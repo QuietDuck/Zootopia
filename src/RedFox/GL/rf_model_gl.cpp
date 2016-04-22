@@ -9,6 +9,7 @@ TODO: FIX COPY ISSUE. (RfMeshGL)
 #include <iostream>
 #include <IL/il.h>
 
+#include "rf_state_gl.h"
 #include "rf_mesh_gl.h"
 
 using namespace zootopia;
@@ -22,14 +23,16 @@ RfModelGL::RfModelGL(const std::string& path, bool gamma) :
 
 RfModelGL::~RfModelGL()
 {
-    //ZLOG_I("~RfModelGL DESTRUCTOR CALL~!");
+    for (auto mesh : _meshes)
+        ZDELETEZ_SAFE(mesh);
+
+    RF_GL_CHECK_ERROR();
 }
 
 void RfModelGL::draw()
 {
-    // We must use 'pass by reference'.
-    for (auto &mesh : _meshes)
-        mesh.draw();
+    for (auto mesh : _meshes)
+        mesh->draw();
 }
 
 void RfModelGL::loadModel(const std::string& path)
@@ -70,7 +73,7 @@ void RfModelGL::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-RfMeshGL RfModelGL::processMesh(aiMesh* mesh, const aiScene* scene)
+RfMeshGL* RfModelGL::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // Data to fill
     std::vector<VertexGL>       vertices;
@@ -183,8 +186,10 @@ RfMeshGL RfModelGL::processMesh(aiMesh* mesh, const aiScene* scene)
         */
     }
 
+    RfMeshGL* meshGL = new RfMeshGL(vertices, indices, textures, mat);
+
     // Return a mesh object created from the extracted mesh data
-    return RfMeshGL(vertices, indices, textures, mat);
+    return meshGL;
 }
 
 std::vector<TextureGL> RfModelGL::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
@@ -224,7 +229,7 @@ std::vector<TextureGL> RfModelGL::loadMaterialTextures(aiMaterial* mat, aiTextur
 
 GLint RfModelGL::textureFromFile(const char* path, std::string directory)
 {
-    //Generate texture ID and load texture data 
+    // Generate texture ID and load texture data
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
 
@@ -263,6 +268,8 @@ GLint RfModelGL::textureFromFile(const char* path, std::string directory)
 
     // free DevIL image.
     ilDeleteImages(1, &img);
+
+    RF_GL_CHECK_ERROR();
 
     return textureID;
 }

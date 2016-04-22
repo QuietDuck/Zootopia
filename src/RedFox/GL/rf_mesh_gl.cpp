@@ -10,6 +10,7 @@ TODO: Optimize draw().
 #include <fstream>
 #include <sstream>
 
+#include "rf_state_gl.h"
 #include "rf_shader_gl.h"
 #include "rf_compositor_gl.h"
 
@@ -30,7 +31,14 @@ RfMeshGL::RfMeshGL(std::vector<VertexGL> vertices, std::vector<GLuint> indices, 
 
 RfMeshGL::~RfMeshGL()
 {
-    //ZLOG_I("~RfMeshGL() CALL DESTRUCTOR!!!");
+    if (_EBO NEQ GL_NONE)
+        glDeleteBuffers(1, &_EBO);
+    if (_VBO NEQ GL_NONE)
+        glDeleteBuffers(1, &_VBO);
+    if (_VAO NEQ GL_NONE)
+        glDeleteVertexArrays(1, &_VAO);
+
+    RF_GL_CHECK_ERROR();
 }
 
 void RfMeshGL::draw()
@@ -108,6 +116,8 @@ void RfMeshGL::draw()
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+
+    RF_GL_CHECK_ERROR();
 }
 
 void RfMeshGL::setupMesh()
@@ -145,6 +155,7 @@ void RfMeshGL::setupMesh()
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(VertexGL), (GLvoid*)offsetof(VertexGL, bitangent));
 
-    glBindVertexArray(0);
+    glBindVertexArray(GL_NONE);
 
+    RF_GL_CHECK_ERROR();
 }

@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "rf_state_gl.h"
 #include "rf_compositor_gl.h"
 
 using namespace zootopia;
@@ -43,6 +44,8 @@ RfGridGL::RfGridGL() :
     // FOR SAFE. (UNBIND BUFFER)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    RF_GL_CHECK_ERROR();
 }
 
 RfGridGL::~RfGridGL() {}
@@ -53,11 +56,12 @@ void RfGridGL::destroy() {
         ZDELETEZ_SAFE(_gridShader);
 
     if (_gridVAO NEQ 0)
-        glDeleteBuffers(1, &_gridVAO);
+        glDeleteVertexArrays(1, &_gridVAO);
 
     if (_gridVBO NEQ 0)
         glDeleteBuffers(1, &_gridVBO);
 
+    RF_GL_CHECK_ERROR();
 }
 
 void RfGridGL::draw() {
@@ -88,4 +92,6 @@ void RfGridGL::draw() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glUseProgram(0);
+
+    RF_GL_CHECK_ERROR();
 }

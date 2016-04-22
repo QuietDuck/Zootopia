@@ -20,6 +20,9 @@ namespace zootopia {
 
         explicit RfTextureGL(
             const RfSize& size,
+            const GLenum format,
+            const GLenum type,
+            const GLenum pixelFormat,
             const void* pixels,
             bool useMipmap = false);
 
@@ -32,8 +35,6 @@ namespace zootopia {
 
     private:
 
-        GLenum  _target;
-        GLenum  _format;
         GLuint  _id;
 
     };
