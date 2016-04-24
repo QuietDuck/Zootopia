@@ -33,6 +33,9 @@ namespace zootopia {
         virtual void setDirection(const RfPoint3& position) = 0;
         virtual void setColor(const RfColor& color) = 0;
 
+        Type getType() const { return Type::kSpot; }
+        void setIndex(uint32 index) { _values.index = index; }
+
     protected:
 
         struct Data {

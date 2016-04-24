@@ -24,20 +24,26 @@ namespace zootopia {
 
         friend class RfPointLightGL;
 
-    public:
+    private:
 
         RfLightManagerGL();
         ~RfLightManagerGL();
 
     public:
 
-        void uploadData() override;
+        static RfLightManagerGL* getInstance();
+
+        void destroy();
+
+        void setLight(RfLight* light) override;
 
     private:
 
-        static RfShaderStorageBufferGL* _directionalLightBuffer;
-        static RfShaderStorageBufferGL* _pointLightBuffer;
-        static RfShaderStorageBufferGL* _spotLightBuffer;
+        static RfLightManagerGL*    _lightManager;
+
+        RfShaderStorageBufferGL*    _directionalLightBuffer;
+        RfShaderStorageBufferGL*    _pointLightBuffer;
+        RfShaderStorageBufferGL*    _spotLightBuffer;
 
     };
 

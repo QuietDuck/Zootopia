@@ -23,9 +23,10 @@ namespace zootopia {
         void bind();
         void unbind();
         void setIndex(const GLuint index);
+        void setRange(const GLuint index, const GLintptr offset, const GLsizeiptr size);
 
-        void uploadData(GLsizeiptr size, const GLvoid* data);
-        //void uploadSubData();
+        void uploadData(const GLsizeiptr size, const GLvoid* data);
+        void uploadSubData(const GLintptr offset, const GLsizeiptr size, const GLvoid* data);
 
     private:
 

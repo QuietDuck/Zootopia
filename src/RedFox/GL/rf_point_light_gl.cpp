@@ -21,12 +21,25 @@ RfPointLightGL::RfPointLightGL(
 ,   _threshold(5.0f)
 ,   _maxBrightness(1.0f)
 {
-    // RfLight value
-    //_color = color;
-    //_maxBrightness = std::max(std::max((color.r()), (color.g())), (color.b())) / 255.0f;
+    _values.position = position;
 
-    // pre-calculation.
+    _values.color.x = color.r() / 255.0f;
+    _values.color.y = color.g() / 255.0f;
+    _values.color.z = color.b() / 255.0f;
+
+    _maxBrightness = std::max(std::max((_values.color.x), (_values.color.y)), (_values.color.z));
+
+    // Set default value
+    _values.linear = 0.7f;
+    _values.quadratic = 1.8f;
+
+    // Pre-calculation.
     _calculateRadius();
+
+    // Set Light
+    RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
+    lightManager->setLight(this);
+
 }
 
 
@@ -35,20 +48,13 @@ RfPointLightGL::~RfPointLightGL() {}
 
 void RfPointLightGL::setPosition(const RfPoint3& position)
 {
-    _values.position.x = position.x;
-    _values.position.y = position.y;
-    _values.position.z = position.z;
+    _values.position = position;
 
-    /*
-    RfLightManagerGL::_pointLightBuffer->bind();
-    const GLintptr offset =
-        RfScalarTruncToInt(_values.color.w) * sizeof(PointLight);
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, sizeof(RfVector3), &_values.position);
-    RfLightManagerGL::_pointLightBuffer->setIndex(2);
-    RfLightManagerGL::_pointLightBuffer->unbind();
-
-    RF_GL_CHECK_ERROR();
-    */
+    _update(
+        sizeof(RfPointLight::Data) * _values.index,
+        sizeof(RfPoint3),
+        &_values.position
+    );
 }
 
 
@@ -62,16 +68,11 @@ void RfPointLightGL::setColor(const RfColor& color)
 
     _calculateRadius();
 
-    /*
-    RfLightManagerGL::_pointLightBuffer->bind();
-    const GLintptr offset = 
-        RfScalarTruncToInt(_values.color.w) * sizeof(PointLight) + sizeof(RfVector4) * 1;
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, sizeof(PointLight) - 1, &_values);
-    RfLightManagerGL::_pointLightBuffer->setIndex(2);
-    RfLightManagerGL::_pointLightBuffer->unbind();
-
-    RF_GL_CHECK_ERROR();
-    */
+    _update(
+        sizeof(RfPointLight::Data) * _values.index + sizeof(RfPoint3) + sizeof(uint32),
+        sizeof(RfScalar) * 3 + sizeof(uint32) + sizeof(RfVector3),
+        &_values.linear
+    );
 }
 
 
@@ -82,21 +83,25 @@ void RfPointLightGL::setProperties(const RfScalar linear, const RfScalar quadrat
 
     _calculateRadius();
 
-    /*
-    RfLightManagerGL::_pointLightBuffer->bind();
-    const GLintptr offset =
-        RfScalarTruncToInt(_values.color.w) * sizeof(PointLight) + sizeof(RfVector4) * 1;
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, sizeof(PointLight) - 1, &_values);
-    RfLightManagerGL::_pointLightBuffer->setIndex(2);
-    RfLightManagerGL::_pointLightBuffer->unbind();
-
-    RF_GL_CHECK_ERROR();
-    */
+    _update(
+        sizeof(RfPointLight::Data) * _values.index + sizeof(RfPoint3) + sizeof(uint32),
+        sizeof(RfScalar) * 3,
+        &_values.linear
+    );
 }
 
 
 void RfPointLightGL::_calculateRadius()
 {
     _values.radius = (-_values.linear + static_cast<float>(std::sqrt(_values.linear * _values.linear - 4 * _values.quadratic * (_constant - (256.0 / _threshold) * _maxBrightness)))) / (2 * _values.quadratic);
+}
+
+
+void RfPointLightGL::_update(const GLintptr offset, const GLsizeiptr size, const GLvoid* data)
+{
+    RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
+    lightManager->_pointLightBuffer->bind();
+    lightManager->_pointLightBuffer->uploadSubData(offset, size, data);
+    lightManager->_pointLightBuffer->unbind();
 }
 

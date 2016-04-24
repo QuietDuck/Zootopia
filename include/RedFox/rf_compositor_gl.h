@@ -64,7 +64,6 @@ namespace zootopia {
 
         void setShader(RfShader* shader) override;
         void setCamera(RfCamera* camera) override;
-        void setLights(const std::vector<RfLight*>& lights) override;
 
         static RfCameraGL* getCamera() { return _displayCamera; }
 
@@ -93,11 +92,10 @@ namespace zootopia {
         RfQuadGL*   _quad;
 
         // Light
-        std::vector<RfPointLight*>          _pointLights;
-        std::vector<RfDirectionalLight*>    _directionalLights;
-        std::vector<RfSpotLight*>           _spotLights;
+        RfPointLight*       _testLight;
 
-        RfLightManagerGL* _lightManager;
+        RfLightManagerGL*   _lightManager;
+
 
     };
 

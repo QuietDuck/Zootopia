@@ -33,6 +33,7 @@ namespace zootopia {
         virtual void setColor(const RfColor& color) = 0;
 
         Type getType() const override { return Type::kDirectional; }
+        void setIndex(uint32 index) { _values.index = index; }
 
     protected:
 

@@ -8,11 +8,13 @@ uniform sampler2D gAlbedoSpec;
 
 struct PointLight {
     vec4 Position;
-    vec4 Color;
     
     float Linear;
     float Quadratic;
     float Radius;
+    float padding;
+    
+    vec4 Color;
 };
 
 layout (std430, binding = 2) buffer PointLightBuffer

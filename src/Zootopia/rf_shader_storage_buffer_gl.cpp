@@ -47,10 +47,28 @@ void RfShaderStorageBufferGL::setIndex(const GLuint index)
     RF_GL_CHECK_ERROR();
 }
 
-void RfShaderStorageBufferGL::uploadData(GLsizeiptr size, const GLvoid* data)
+void RfShaderStorageBufferGL::setRange(const GLuint index, const GLintptr offset, const GLsizeiptr size)
+{
+    //bind();
+    glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, _SSBO, offset, size);
+    //unbind();
+
+    RF_GL_CHECK_ERROR();
+}
+
+void RfShaderStorageBufferGL::uploadData(const GLsizeiptr size, const GLvoid* data)
 {
     //bind();
     glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY);
+    //unbind();
+
+    RF_GL_CHECK_ERROR();
+}
+
+void RfShaderStorageBufferGL::uploadSubData(const GLintptr offset, const GLsizeiptr size, const GLvoid* data)
+{
+    //bind();
+    glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, size, data);
     //unbind();
 
     RF_GL_CHECK_ERROR();

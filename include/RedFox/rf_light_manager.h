@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-RfLightManager - Class
+RfLightManager - Interface
 */
 
 #ifndef __RF_LIGHT_MANAGER_H__
@@ -22,20 +22,18 @@ namespace zootopia {
 
     public:
 
-        RfLightManager();
-        ~RfLightManager();
+        RfLightManager() {};
+        ~RfLightManager() {};
 
     public:
 
-        void setLights(const std::vector<RfLight*>& lights);
-
-        virtual void uploadData() = 0;
+        virtual void setLight(RfLight* light) = 0;
 
     protected:
 
-        std::vector<RfDirectionalLight::Data>   _directionalLights;
-        std::vector<RfPointLight::Data>         _pointLights;
-        std::vector<RfSpotLight::Data>          _spotLights;
+        std::vector<RfDirectionalLight*>   _directionalLights;
+        std::vector<RfPointLight*>         _pointLights;
+        std::vector<RfSpotLight*>          _spotLights;
 
     };
 

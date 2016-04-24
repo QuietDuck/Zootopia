@@ -42,8 +42,6 @@ namespace zootopia {
 
         virtual void    setShader(RfShader* shader) = 0;
         virtual void    setCamera(RfCamera* camera) = 0;
-        virtual void    setLights(const std::vector<RfLight*>& lights) = 0;
-
     };
 
 }

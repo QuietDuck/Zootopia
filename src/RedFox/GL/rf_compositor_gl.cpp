@@ -52,8 +52,6 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     _gBuffer = RfGeometryBufferGL::getBuffer();
     _gBuffer->initialize(fboSize);
 
-    _lightManager = new RfLightManagerGL;
-
     /*
     struct PointLight {
 
@@ -119,10 +117,9 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     //*/
 
-    //*
+    /*
     const GLuint NR_LIGHTS = 128;
-    std::vector<RfLight*> lights;
-    srand(13);
+    srand(3);
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
 
         RfPointLight* pointLight = new RfPointLightGL(
@@ -142,16 +139,14 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         bColor *= 255;
         RfColor lightColor = RfColor::make_RGBA32(rColor, gColor, bColor, 0xFF);
         pointLight->setColor(lightColor);
-
         pointLight->setProperties(0.7f, 1.8f);
-
-        lights.push_back(pointLight);
     }
-
-    _lightManager->setLights(lights);
     //*/
 
-    RF_GL_CHECK_ERROR();
+    _testLight = new RfPointLightGL(
+        RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
+        RfPoint3(0, 4, 0));
+    _testLight->setProperties(0.7f/100.0f, 1.8f/100.0f);
 }
 
 void RfCompositorGL::resize(const RfSize & fboSize)
@@ -252,10 +247,16 @@ void RfCompositorGL::renderUserInterface()
     RF_GL_CHECK_ERROR();
 }
 
+static RfScalar lightPos = 1.0f;
 void RfCompositorGL::postProcess()
 {  
     ZASSERT(_displayShader);
     ZASSERT(_displayCamera);
+
+    lightPos += 0.05f;
+    if (lightPos >= 7.0f)
+        lightPos = 1.0f;
+    _testLight->setPosition(RfPoint3(0, lightPos, 0));
 
     // Render output (deferred rendering)
     glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
@@ -322,42 +323,6 @@ void RfCompositorGL::setCamera(RfCamera* camera)
     ZASSERT(camera);
 
     _displayCamera = static_cast<RfCameraGL*>(camera);
-
-    RF_GL_CHECK_ERROR();
-}
-
-void RfCompositorGL::setLights(const std::vector<RfLight*>& lights)
-{
-    for (auto light : lights) {
-
-        switch (light->getType()) {
-
-        case RfLight::Type::kDirectional: {
-
-            RfDirectionalLight* directionalLight = static_cast<RfDirectionalLight*>(light);
-            _directionalLights.push_back(directionalLight);
-            break;
-        }
-
-        case RfLight::Type::kPoint: {
-
-            RfPointLight* pointLight = static_cast<RfPointLight*>(light);
-            _pointLights.push_back(pointLight);
-            break;
-        }
-
-        case RfLight::Type::kSpot: {
-
-            RfSpotLight* spotLight = static_cast<RfSpotLight*>(light);
-            _spotLights.push_back(spotLight);
-            break;
-        }    
-
-        default:
-
-            ZABORT("Unexpected Process: RfCompositorGL::setLights()");
-        }
-    }
 
     RF_GL_CHECK_ERROR();
 }
