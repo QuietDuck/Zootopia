@@ -34,12 +34,11 @@ namespace zootopia {
     public:
 
         static RfLightManagerGL* getInstance();
-
-        void destroy();
-
-        void setLight(RfLight* light) override;
+        void destroy();    
 
     private:
+
+        void setLight(RfLight* light) override;
 
         static RfLightManagerGL*    _lightManager;
 

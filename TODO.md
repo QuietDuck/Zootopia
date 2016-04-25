@@ -1,15 +1,16 @@
 Project Zootopia
 
+4/26
 TODO List:
 
 MAKE:
-Quad, gBuffer, Light Class and implement.
+Rendering Light Bulb. Shadow Mapping.
 
 FIX:
 Model T,S,R issues.
 
 CHANGE:
-Shader Uniform value processing flow.
+LightManager, Quad, Grid, Texture structure.
 
 ADD:
 GoogleTest, Doxygen setting.

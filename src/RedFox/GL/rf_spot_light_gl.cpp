@@ -92,6 +92,7 @@ void RfSpotLightGL::setCutOff(const RfScalar cutOff, const RfScalar outerCutOff)
     );
 }
 
+
 void RfSpotLightGL::setProperties(const RfScalar linear, const RfScalar quadratic)
 {
     _values.linear = linear;
