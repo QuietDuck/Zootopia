@@ -32,7 +32,7 @@ RfSpotLightGL::RfSpotLightGL(
     
     /// TEMPORARY set default value.
     _values.cutOff = glm::cos(glm::radians(12.5f));
-    _values.outerCutOff = glm::cos(glm::radians(17.5f));
+    _values.outerCutOff = glm::cos(glm::radians(15.5f));
 
     RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
     lightManager->setLight(this);

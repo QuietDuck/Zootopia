@@ -30,9 +30,13 @@ Project Zootopia
 
 ###CURRENT STATUS
 
-#####- Deferred rendering.
+#####- Deferred Rendering.
 ![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/1.png)
 
 
-#####- Normal mapping.
+#####- Normal Mapping.
 ![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/2.png)
+
+
+#####- Multiple Lighting.
+![alt tag](https://raw.githubusercontent.com/QuietDuck/Zootopia/master/screenshot/3.png)

@@ -117,7 +117,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     //*/
 
-    /*
+    //*
     const GLuint NR_LIGHTS = 128;
     srand(3);
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
