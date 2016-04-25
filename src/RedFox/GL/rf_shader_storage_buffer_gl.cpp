@@ -49,7 +49,7 @@ void RfShaderStorageBufferGL::setIndex(const GLuint index)
 
 void RfShaderStorageBufferGL::setRange(const GLuint index, const GLintptr offset, const GLsizeiptr size)
 {
-    //bind();
+    //bind(); // for safety?
     glBindBufferRange(GL_SHADER_STORAGE_BUFFER, index, _SSBO, offset, size);
     //unbind();
 
@@ -58,7 +58,7 @@ void RfShaderStorageBufferGL::setRange(const GLuint index, const GLintptr offset
 
 void RfShaderStorageBufferGL::uploadData(const GLsizeiptr size, const GLvoid* data)
 {
-    //bind();
+    //bind(); // for safety?
     glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_COPY);
     //unbind();
 
@@ -67,7 +67,7 @@ void RfShaderStorageBufferGL::uploadData(const GLsizeiptr size, const GLvoid* da
 
 void RfShaderStorageBufferGL::uploadSubData(const GLintptr offset, const GLsizeiptr size, const GLvoid* data)
 {
-    //bind();
+    //bind(); // for safety?
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, offset, size, data);
     //unbind();
 

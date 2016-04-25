@@ -29,15 +29,14 @@ namespace zootopia {
 
         struct Data {
 
-            RfPoint3 position;
-            uint32 pad_1;
+            RfPoint3 position; RfScalar constant;
 
+            uint32 padding;
             RfScalar linear;
             RfScalar quadratic;
             RfScalar radius;
-            uint32 pad_2;
 
-            RfVector3 color; // color has index value in 4th element (alpha)
+            RfVector3 color;
             uint32 index;
         };
 
@@ -46,7 +45,7 @@ namespace zootopia {
         virtual void setProperties(const RfScalar linear, const RfScalar quadratic) = 0;
 
         Type getType() const override { return Type::kPoint; }
-        Data getData() const { return _values; };
+        Data getData() const { return _values; }
 
     protected:
 

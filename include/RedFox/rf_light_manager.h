@@ -10,7 +10,7 @@ RfLightManager - Interface
 #include <vector>
 
 #include "rf_light.h"
-#include "rf_directional_light.h"
+#include "rf_dir_light.h"
 #include "rf_point_light.h"
 #include "rf_spot_light.h"
 
@@ -31,9 +31,9 @@ namespace zootopia {
 
     protected:
 
-        std::vector<RfDirectionalLight*>   _directionalLights;
-        std::vector<RfPointLight*>         _pointLights;
-        std::vector<RfSpotLight*>          _spotLights;
+        std::vector<RfDirLight*>    _dirLights;
+        std::vector<RfPointLight*>  _pointLights;
+        std::vector<RfSpotLight*>   _spotLights;
 
     };
 

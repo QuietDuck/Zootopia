@@ -12,40 +12,46 @@ const GLuint D_LIGHT_BUFFER_INDEX = 1;
 const GLuint P_LIGHT_BUFFER_INDEX = 2;
 const GLuint S_LIGHT_BUFFER_INDEX = 3;
 
-const GLuint MAX_LIGHT_NUM = 1024;
+const GLuint D_LIGHT_MAX_NUM = 16;
+const GLuint P_LIGHT_MAX_NUM = 256;
+const GLuint S_LIGHT_MAX_NUM = 128;
 
 // Single Tone
 RfLightManagerGL* RfLightManagerGL::_lightManager = nullptr;
 
 RfLightManagerGL::RfLightManagerGL() 
 {
-    _directionalLightBuffer = new RfShaderStorageBufferGL;
+    _dirLightBuffer = new RfShaderStorageBufferGL;
     _pointLightBuffer = new RfShaderStorageBufferGL;
     _spotLightBuffer = new RfShaderStorageBufferGL;
 
     // Allocate SSBO
-    //_directionalLightBuffer->bind();
-
-    //_directionalLightBuffer->setIndex(D_LIGHT_BUFFER_INDEX);
-    //_directionalLightBuffer->unbind();
+    _dirLightBuffer->bind();
+    _pointLightBuffer->uploadData(
+        sizeof(RfDirLight::Data) * D_LIGHT_MAX_NUM,
+        nullptr);
+    _dirLightBuffer->setIndex(D_LIGHT_BUFFER_INDEX);
+    _dirLightBuffer->unbind();
 
     _pointLightBuffer->bind();
     _pointLightBuffer->uploadData(
-        sizeof(RfPointLight::Data) * MAX_LIGHT_NUM,
+        sizeof(RfPointLight::Data) * P_LIGHT_MAX_NUM,
         nullptr);
     _pointLightBuffer->setIndex(P_LIGHT_BUFFER_INDEX);
     _pointLightBuffer->unbind();
 
-    //_spotLightBuffer->bind();
-
-    //_spotLightBuffer->setIndex(S_LIGHT_BUFFER_INDEX);
-    //_spotLightBuffer->unbind();
+    _spotLightBuffer->bind();
+    _spotLightBuffer->uploadData(
+        sizeof(RfSpotLight::Data) * S_LIGHT_MAX_NUM,
+        nullptr);
+    _spotLightBuffer->setIndex(S_LIGHT_BUFFER_INDEX);
+    _spotLightBuffer->unbind();
 }
 
 
 RfLightManagerGL::~RfLightManagerGL()
 {
-    delete _directionalLightBuffer;
+    delete _dirLightBuffer;
     delete _pointLightBuffer;
     delete _spotLightBuffer;
 
@@ -75,7 +81,24 @@ void RfLightManagerGL::setLight(RfLight * light)
 
     case RfLight::Type::kDirectional: {
 
-        ZABORT_NOT_IMPLEMENTED();
+        RfDirLightGL* dirLight = static_cast<RfDirLightGL*>(light);
+        dirLight->_setIndex(_dirLights.size());
+        _dirLights.push_back(dirLight);
+
+        _dirLightBuffer->bind();
+        _dirLightBuffer->uploadSubData(
+            sizeof(RfDirLight::Data) * dirLight->_getIndex(),
+            sizeof(RfDirLight::Data),
+            &dirLight->getData()
+        );
+        _dirLightBuffer->setRange(
+            D_LIGHT_BUFFER_INDEX,
+            0,
+            sizeof(RfDirLight::Data) * _dirLights.size()
+        );
+
+        _dirLightBuffer->unbind();
+
         break;
     }
 
@@ -85,7 +108,6 @@ void RfLightManagerGL::setLight(RfLight * light)
         pointLight->_setIndex(_pointLights.size());
         _pointLights.push_back(pointLight);
 
-        // Upload data
         _pointLightBuffer->bind();
         _pointLightBuffer->uploadSubData(
             sizeof(RfPointLight::Data) * pointLight->_getIndex(),
@@ -104,7 +126,23 @@ void RfLightManagerGL::setLight(RfLight * light)
 
     case RfLight::Type::kSpot: {
 
-        ZABORT_NOT_IMPLEMENTED();
+        RfSpotLightGL* spotLight = static_cast<RfSpotLightGL*>(light);
+        spotLight->_setIndex(_spotLights.size());
+        _spotLights.push_back(spotLight);
+
+        _spotLightBuffer->bind();
+        _spotLightBuffer->uploadSubData(
+            sizeof(RfSpotLight::Data) * spotLight->_getIndex(),
+            sizeof(RfSpotLight::Data),
+            &spotLight->getData()
+        );
+        _spotLightBuffer->setRange(
+            S_LIGHT_BUFFER_INDEX,
+            0,
+            sizeof(RfSpotLight::Data) * _spotLights.size()
+        );
+        _spotLightBuffer->unbind();
+
         break;
     }
 

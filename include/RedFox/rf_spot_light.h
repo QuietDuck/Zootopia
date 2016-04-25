@@ -29,26 +29,30 @@ namespace zootopia {
 
     public:
 
-        virtual void setPosition(const RfPoint3& position) = 0;
-        virtual void setDirection(const RfPoint3& position) = 0;
-        virtual void setColor(const RfColor& color) = 0;
-
-        Type getType() const { return Type::kSpot; }
-        void setIndex(uint32 index) { _values.index = index; }
-
-    protected:
-
         struct Data {
 
-            RfPoint3 position;
-            uint32 pad_1;
-
-            RfVector3 direction;
+            RfPoint3 position; RfScalar constant;
+            RfVector3 direction; uint32 padding;
+            
             RfScalar cutOff;
-
+            RfScalar outerCutOff;
+            RfScalar linear;
+            RfScalar quadratic;
+            
             RfVector3 color;
             uint32 index;
         };
+
+        virtual void setPosition(const RfPoint3& position) = 0;
+        virtual void setDirection(const RfVector3& direction) = 0;
+        virtual void setColor(const RfColor& color) = 0;
+        virtual void setCutOff(const RfScalar cutOff, const RfScalar outerCutOff) = 0;
+        virtual void setProperties(const RfScalar linear, const RfScalar quadratic) = 0;
+
+        Type getType() const { return Type::kSpot; }
+        Data getData() const { return _values; }
+
+    protected:
 
         Data _values;
 

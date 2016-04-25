@@ -13,8 +13,8 @@ RfLightManagerGL - Class
 #include "rf_light_manager.h"
 
 #include "rf_point_light_gl.h"
-//#include "rf_directional_light_gl.h"
-//#include "rf_spot_light_gl.h"
+#include "rf_dir_light_gl.h"
+#include "rf_spot_light_gl.h"
 
 #include "rf_shader_storage_buffer_gl.h"
 
@@ -22,8 +22,10 @@ namespace zootopia {
 
     class RfLightManagerGL : public RfLightManager {
 
+        friend class RfDirLightGL;
         friend class RfPointLightGL;
-
+        friend class RfSpotLightGL;
+        
     private:
 
         RfLightManagerGL();
@@ -41,7 +43,7 @@ namespace zootopia {
 
         static RfLightManagerGL*    _lightManager;
 
-        RfShaderStorageBufferGL*    _directionalLightBuffer;
+        RfShaderStorageBufferGL*    _dirLightBuffer;
         RfShaderStorageBufferGL*    _pointLightBuffer;
         RfShaderStorageBufferGL*    _spotLightBuffer;
 

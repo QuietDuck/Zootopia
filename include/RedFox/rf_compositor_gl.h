@@ -18,7 +18,7 @@
 
 #include "rf_light.h"
 #include "rf_point_light.h"
-#include "rf_directional_light.h"
+#include "rf_dir_light.h"
 #include "rf_spot_light.h"
 
 #include "rf_light_manager_gl.h"
@@ -93,6 +93,11 @@ namespace zootopia {
 
         // Light
         RfPointLight*       _testLight;
+        RfDirLight*         _testLight2;
+
+        RfSpotLight*        _testLightR;
+        RfSpotLight*        _testLightG;
+        RfSpotLight*        _testLightB;
 
         RfLightManagerGL*   _lightManager;
 

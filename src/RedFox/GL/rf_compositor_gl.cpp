@@ -123,8 +123,9 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
 
         RfPointLight* pointLight = new RfPointLightGL(
-            RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
-            RfPoint3(0, 0, 0));
+            RfPoint3(0, 0, 0),
+            RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF)    
+        );
 
         GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
         GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
@@ -142,11 +143,37 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         pointLight->setProperties(0.7f, 1.8f);
     }
     //*/
-
+    /*
     _testLight = new RfPointLightGL(
-        RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
-        RfPoint3(0, 4, 0));
+        RfPoint3(0, 4, 0),
+        RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF)    
+    );
     _testLight->setProperties(0.7f/100.0f, 1.8f/100.0f);
+    //*/
+    //*
+    _testLight2 = new RfDirLightGL(
+        RfVector3(0,-1,0),
+        RfColor::make_RGBA32(0x3F, 0x3F, 0x3F, 0xFF)
+    );
+    //*/
+
+    _testLightR = new RfSpotLightGL(
+        RfPoint3(1, 8, 1),
+        RfVector3(0, -1, 0),
+        RfColor::make_RGBA32(0xFF, 0x00, 0x00, 0xFF)
+    );
+
+    _testLightG = new RfSpotLightGL(
+        RfPoint3(-1, 8, -1),
+        RfVector3(0, -1, 0),
+        RfColor::make_RGBA32(0x00, 0xFF, 0x00, 0xFF)
+    );
+
+    _testLightB = new RfSpotLightGL(
+        RfPoint3(2, 8, -2),
+        RfVector3(0, -1, 0),
+        RfColor::make_RGBA32(0x00, 0x00, 0xFF, 0xFF)
+    );
 }
 
 void RfCompositorGL::resize(const RfSize & fboSize)
@@ -256,7 +283,7 @@ void RfCompositorGL::postProcess()
     lightPos += 0.05f;
     if (lightPos >= 7.0f)
         lightPos = 1.0f;
-    _testLight->setPosition(RfPoint3(0, lightPos, 0));
+    //_testLight->setPosition(RfPoint3(0, lightPos, 0));
 
     // Render output (deferred rendering)
     glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
