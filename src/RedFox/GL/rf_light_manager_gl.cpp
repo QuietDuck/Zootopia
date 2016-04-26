@@ -5,6 +5,7 @@ RfLightManagerGL - Implementation
 #include "zpd.h"
 
 #include "rf_state_gl.h"
+#include "rf_compositor_gl.h"
 
 using namespace zootopia;
 
@@ -46,6 +47,12 @@ RfLightManagerGL::RfLightManagerGL()
         nullptr);
     _spotLightBuffer->setIndex(S_LIGHT_BUFFER_INDEX);
     _spotLightBuffer->unbind();
+
+    // light bulb. (for debugging)
+    _lightBulbShader = new RfShaderGL("shader/glsl/light_bulb.vert", "shader/glsl/light_bulb.frag");
+    _lightBulbModel = new RfModelGL("models/sphere/sphere.obj");
+    _lightBulb = new RfObjectGL(_lightBulbModel);
+    _lightBulb->scale(RfPoint3(0.1f, 0.1f, 0.1f));
 }
 
 
@@ -74,17 +81,18 @@ void RfLightManagerGL::destroy()
 }
 
 
-void RfLightManagerGL::drawLightBulb(RfShaderGL* lightBulbShader, RfObjectGL* lightBulb)
+void RfLightManagerGL::drawLightBulb()
 {
-    lightBulbShader->use();
+    _lightBulbShader->use();
+    RfCompositorGL::_currentShader = _lightBulbShader;
 
     for (auto pointLight : _pointLights) {
-        lightBulb->setPosition(pointLight->getPosition());
-        lightBulb->scale(RfPoint3(0.2f, 0.2f, 0.2f));
+        _lightBulb->setPosition(pointLight->getPosition());
+        _lightBulb->scale(RfPoint3(0.2f, 0.2f, 0.2f));
         const RfVector3 lightColor = pointLight->getColor();
-        glUniform3f(glGetUniformLocation(lightBulbShader->getShaderProgObj(), "lightColor"),
+        glUniform3f(glGetUniformLocation(_lightBulbShader->getShaderProgObj(), "lightColor"),
             lightColor.x, lightColor.y, lightColor.z);
-        lightBulb->draw();
+        _lightBulb->draw();
     }
 }
 
@@ -110,7 +118,6 @@ void RfLightManagerGL::_insertLight(RfLight * light)
             0,
             sizeof(RfDirLight::Data) * _dirLights.size()
         );
-
         _dirLightBuffer->unbind();
 
         break;

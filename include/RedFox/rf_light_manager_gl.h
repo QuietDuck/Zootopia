@@ -37,7 +37,7 @@ namespace zootopia {
         static RfLightManagerGL* getInstance();
         void destroy();
 
-        void drawLightBulb(RfShaderGL* lightBulbShader, RfObjectGL* lightBulb);
+        void drawLightBulb();
 
     private:
 
@@ -48,6 +48,11 @@ namespace zootopia {
         RfShaderStorageBufferGL*    _dirLightBuffer;
         RfShaderStorageBufferGL*    _pointLightBuffer;
         RfShaderStorageBufferGL*    _spotLightBuffer;
+
+        // Light Bulb
+        RfShaderGL*     _lightBulbShader;
+        RfModelGL*      _lightBulbModel;
+        RfObjectGL*     _lightBulb;
 
     };
 

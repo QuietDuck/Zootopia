@@ -92,7 +92,8 @@ void main()
             float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
             vec3 specular = pointLights[i].Color.rgb * spec * Specular;
             // Attenuation
-            float attenuation = 1.0 / (pointLights[i].Position.w + pointLights[i].Linear * distance + pointLights[i].Quadratic * distance * distance);
+            //float attenuation = 1.0 / (pointLights[i].Position.w + pointLights[i].Linear * distance + pointLights[i].Quadratic * distance * distance);
+            float attenuation = 1.0 / (1.0 + pointLights[i].Linear * distance + pointLights[i].Quadratic * distance * distance);
             diffuse *= attenuation;
             specular *= attenuation;
             lighting += diffuse + specular;
@@ -100,6 +101,7 @@ void main()
     }
     
     // Calculate Spot Lights
+    //*
     for (int i = 0; i < spotLights.length(); ++i) {
         
         // Calculate distance between light source and current fragment
@@ -118,11 +120,13 @@ void main()
         diffuse  *= intensity;
         specular *= intensity;
         // Attenuation
-        float attenuation = 1.0f / (spotLights[i].Position.w + spotLights[i].Linear * distance + spotLights[i].Quadratic * (distance * distance));    
+        //float attenuation = 1.0 / (spotLights[i].Position.w + spotLights[i].Linear * distance + spotLights[i].Quadratic * (distance * distance));
+        float attenuation = 1.0 / (1.0 + spotLights[i].Linear * distance + spotLights[i].Quadratic * (distance * distance));    
         diffuse  *= attenuation;
         specular *= attenuation;
         lighting += diffuse + specular;
     }
+    //*/
     
     FragColor = vec4(lighting, 1.0);
     //FragColor = vec4(FragPos, 1.0);

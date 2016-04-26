@@ -61,7 +61,7 @@ void RfSpotLightGL::setDirection(const RfVector3& direction)
     _update(
         sizeof(RfSpotLight::Data) * _values.index + sizeof(RfPoint3) + sizeof(RfScalar),
         sizeof(RfPoint3),
-        &_values.position
+        &_values.direction
     );
 }
 

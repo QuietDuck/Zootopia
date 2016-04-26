@@ -55,13 +55,9 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     _gBuffer->initialize(fboSize);
 
     _lightManager = RfLightManagerGL::getInstance();
-    _lightBulbShader = new RfShaderGL("shader/glsl/light_bulb.vert", "shader/glsl/light_bulb.frag");
-    _lightBulbModel = new RfModelGL("models/sphere/sphere.obj");
-    _lightBulb = new RfObjectGL(_lightBulbModel);
-    _lightBulb->scale(RfPoint3(0.1f, 0.1f, 0.1f));
 
     //*
-    const GLuint NR_LIGHTS = 128;
+    const GLuint NR_LIGHTS = 64;
     srand(7);
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
 
@@ -96,10 +92,11 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     //*
     _testLight2 = new RfDirLightGL(
         RfVector3(0, -1, 0),
-        RfColor::make_RGBA32(0x3F, 0x3F, 0x3F, 0xFF)
+        RfColor::make_RGBA32(0x1F, 0x1F, 0x1F, 0xFF)
     );
     //*/
 
+    //*
     _testLightR = new RfSpotLightGL(
         RfPoint3(1, 8, 1),
         RfVector3(0, -1, 0),
@@ -117,6 +114,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         RfVector3(0, -1, 0),
         RfColor::make_RGBA32(0x00, 0x00, 0xFF, 0xFF)
     );
+    //*/
 }
 
 void RfCompositorGL::resize(const RfSize & fboSize)
@@ -171,9 +169,6 @@ void RfCompositorGL::prepareFrame(const RfSize& frameSize)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClearDepth(1.0f);
     glClearStencil(0);
-
-    // IT IS NESSESARY.
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     RF_GL_CHECK_ERROR();
 }
@@ -253,14 +248,14 @@ void RfCompositorGL::postProcess()
     _quad->draw();
 
     //*
-    // 2.5. Copy content of geometry's depth buffer to default framebuffer's depth buffer
+    // Copy content of geometry's depth buffer to default framebuffer's depth buffer
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _gBuffer->getId());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
     glBlitFramebuffer(0, 0, 1280, 720, 0, 0, 1280, 720, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     //*/
-    _currentShader = _lightBulbShader;
-    _lightManager->drawLightBulb(_lightBulbShader, _lightBulb);
+
+    _lightManager->drawLightBulb();
 
     RF_GL_CHECK_ERROR();
 }

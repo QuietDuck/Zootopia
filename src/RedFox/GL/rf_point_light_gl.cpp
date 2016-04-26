@@ -28,9 +28,9 @@ RfPointLightGL::RfPointLightGL(
     _maxBrightness = std::max(std::max((_values.color.x), (_values.color.y)), (_values.color.z));
 
     // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
-    _values.constant = 1.0f; // should be 1.0f
-    _values.linear = 0.7f;
-    _values.quadratic = 1.8f;
+    _values.constant = 1.0f;
+    _values.linear = 0.22f;
+    _values.quadratic = 0.2f;
 
     _values.padding = 0;
 

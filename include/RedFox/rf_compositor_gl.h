@@ -35,11 +35,12 @@ namespace zootopia {
 
     class RfCompositorGL : public RfCompositor {
 
-        // IS THIS GOOD?
+        // IS THIS GOOD? NOPE.
         // FOR _displayCamera, _deferredShader.
         friend class RfMeshGL;
         friend class RfObjectGL;
         friend class RfGridGL;
+        friend class RfLightManagerGL;
 
     public:
 
@@ -101,12 +102,6 @@ namespace zootopia {
         RfSpotLight*        _testLightB;
 
         RfLightManagerGL*   _lightManager;
-
-        // Light Bulb
-        RfShaderGL*     _lightBulbShader;
-
-        RfModelGL*      _lightBulbModel;
-        RfObjectGL*     _lightBulb;
 
     };
 
