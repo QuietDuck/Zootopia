@@ -35,7 +35,7 @@ RfSpotLightGL::RfSpotLightGL(
     _values.outerCutOff = glm::cos(glm::radians(15.5f));
 
     RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
-    lightManager->setLight(this);
+    lightManager->_insertLight(this);
 }
 
 

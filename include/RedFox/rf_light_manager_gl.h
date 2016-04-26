@@ -15,6 +15,7 @@ RfLightManagerGL - Class
 #include "rf_point_light_gl.h"
 #include "rf_dir_light_gl.h"
 #include "rf_spot_light_gl.h"
+#include "rf_object_gl.h"
 
 #include "rf_shader_storage_buffer_gl.h"
 
@@ -34,11 +35,13 @@ namespace zootopia {
     public:
 
         static RfLightManagerGL* getInstance();
-        void destroy();    
+        void destroy();
+
+        void drawLightBulb(RfShaderGL* lightBulbShader, RfObjectGL* lightBulb);
 
     private:
 
-        void setLight(RfLight* light) override;
+        void _insertLight(RfLight* light) override;
 
         static RfLightManagerGL*    _lightManager;
 

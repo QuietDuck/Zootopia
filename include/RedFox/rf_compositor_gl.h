@@ -81,6 +81,7 @@ namespace zootopia {
         RfShaderGL*         _displayShader;
         RfShaderGL*         _hitTestShader;
         static RfShaderGL*  _deferredShader;
+        static RfShaderGL*  _currentShader;
 
         // Camera
         static RfCameraGL*  _displayCamera;
@@ -101,6 +102,11 @@ namespace zootopia {
 
         RfLightManagerGL*   _lightManager;
 
+        // Light Bulb
+        RfShaderGL*     _lightBulbShader;
+
+        RfModelGL*      _lightBulbModel;
+        RfObjectGL*     _lightBulb;
 
     };
 

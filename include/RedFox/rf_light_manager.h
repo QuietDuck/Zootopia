@@ -27,9 +27,9 @@ namespace zootopia {
 
     public:
 
-        virtual void setLight(RfLight* light) = 0;
-
     protected:
+
+        virtual void _insertLight(RfLight* light) = 0;
 
         std::vector<RfDirLight*>    _dirLights;
         std::vector<RfPointLight*>  _pointLights;

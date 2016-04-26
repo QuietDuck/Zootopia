@@ -43,7 +43,7 @@ RfMeshGL::~RfMeshGL()
 
 void RfMeshGL::draw()
 {
-    ZASSERT(RfCompositorGL::_deferredShader->getShaderProgObj());
+    ZASSERT(RfCompositorGL::_currentShader->getShaderProgObj());
 
     // Bind appropriate textures
     GLuint diffuseNr = 1;
@@ -53,13 +53,13 @@ void RfMeshGL::draw()
 
     if (_textures.empty()) {
 
-        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(),
             "material.diffuse"),
             _materials.diffuse.r,
             _materials.diffuse.g,
             _materials.diffuse.b);
 
-        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(),
             "material.specular"),
             _materials.specular.r,
             _materials.specular.g,
@@ -87,18 +87,18 @@ void RfMeshGL::draw()
             number = ss.str();
 
             // Now set the sampler to the correct texture unit
-            glUniform1i(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(), (name + number).c_str()), i);
+            glUniform1i(glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(), (name + number).c_str()), i);
             // And finally bind the texture
             glBindTexture(GL_TEXTURE_2D, _textures[i].id);
         }
 
-        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(),
             "material.diffuse"),
             0.0f,
             0.0f,
             0.0f);
 
-        glUniform3f(glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(),
+        glUniform3f(glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(),
             "material.specular"),
             0.0f,
             0.0f,

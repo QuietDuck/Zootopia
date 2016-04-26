@@ -39,7 +39,7 @@ RfPointLightGL::RfPointLightGL(
 
     // Set Light
     RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
-    lightManager->setLight(this);
+    lightManager->_insertLight(this);
 
 }
 

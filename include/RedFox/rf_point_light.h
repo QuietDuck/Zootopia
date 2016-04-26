@@ -44,6 +44,9 @@ namespace zootopia {
         virtual void setColor(const RfColor& color) = 0;
         virtual void setProperties(const RfScalar linear, const RfScalar quadratic) = 0;
 
+        RfPoint3    getPosition() const { return _values.position; }
+        RfVector3   getColor() const { return _values.color; }
+
         Type getType() const override { return Type::kPoint; }
         Data getData() const { return _values; }
 

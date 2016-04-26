@@ -54,8 +54,6 @@ RfLightManagerGL::~RfLightManagerGL()
     delete _dirLightBuffer;
     delete _pointLightBuffer;
     delete _spotLightBuffer;
-
-    delete _lightManager;
 }
 
 RfLightManagerGL * RfLightManagerGL::getInstance()
@@ -69,13 +67,29 @@ RfLightManagerGL * RfLightManagerGL::getInstance()
     }
 }
 
+
 void RfLightManagerGL::destroy()
 {
-    RfLightManagerGL::~RfLightManagerGL();
+    delete _lightManager;
 }
 
 
-void RfLightManagerGL::setLight(RfLight * light)
+void RfLightManagerGL::drawLightBulb(RfShaderGL* lightBulbShader, RfObjectGL* lightBulb)
+{
+    lightBulbShader->use();
+
+    for (auto pointLight : _pointLights) {
+        lightBulb->setPosition(pointLight->getPosition());
+        lightBulb->scale(RfPoint3(0.2f, 0.2f, 0.2f));
+        const RfVector3 lightColor = pointLight->getColor();
+        glUniform3f(glGetUniformLocation(lightBulbShader->getShaderProgObj(), "lightColor"),
+            lightColor.x, lightColor.y, lightColor.z);
+        lightBulb->draw();
+    }
+}
+
+
+void RfLightManagerGL::_insertLight(RfLight * light)
 {
     switch (light->getType()) {
 

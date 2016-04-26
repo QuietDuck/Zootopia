@@ -98,7 +98,7 @@ void BcCore::initialize(BackendType backendType)\
         compositorSetUp();
 
         _resourceManager->initialize();
-        _resourceManager->loadModelFromFile("models/cyborg/cyborg.obj");
+        _resourceManager->loadModelFromFile("");
         //_resourceManager->prepare();
         //_resourceManager->loadImagesFromDir("images");
         

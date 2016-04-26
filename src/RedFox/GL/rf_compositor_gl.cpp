@@ -19,6 +19,8 @@ const GLuint DEFAULT_FRAMEBUFFER = 0;
 
 // SINGLE DEFERRED SHADER.
 RfShaderGL* RfCompositorGL::_deferredShader = nullptr;
+RfShaderGL* RfCompositorGL::_currentShader = nullptr;
+
 RfCameraGL* RfCompositorGL::_displayCamera = nullptr;
 
 RfCompositorGL::RfCompositorGL() :
@@ -52,74 +54,15 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     _gBuffer = RfGeometryBufferGL::getBuffer();
     _gBuffer->initialize(fboSize);
 
-    /*
-    struct PointLight {
-
-        RfPoint3 position; uint32 pad1;
-        RfVector3 color; uint32 pad2;
-        RfScalar linear;
-        RfScalar quadratic;
-        RfScalar radius;
-        uint32 pad3;
-    };
-
-    std::vector<PointLight> pointLights;
-
-    const GLuint NR_LIGHTS = 256;
-    std::vector<glm::vec3> lightPositions;
-    std::vector<glm::vec3> lightColors;
-    srand(13);
-    for (GLuint i = 0; i < NR_LIGHTS; i++) {
-
-        PointLight pointLight;
-
-        // Calculate slightly random offsets
-        GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        GLfloat zPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        //GLfloat xPos = -3.0f;
-        //GLfloat yPos = 4.0f;
-        //GLfloat zPos = 3.0f;
-        lightPositions.push_back(glm::vec3(xPos, yPos, zPos));
-        pointLight.position = RfPoint3(xPos, yPos, zPos);
-        // Also calculate random color
-        GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
-        //GLfloat rColor = 1.0f;
-        //GLfloat gColor = 1.0f;
-        //GLfloat bColor = 1.0f;
-        lightColors.push_back(glm::vec3(rColor, gColor, bColor));
-        pointLight.color = RfVector3(rColor, gColor, bColor);
-
-        const GLfloat constant = 1.0f; // Note that we don't send this to the shader, we assume it is always 1.0 (in our case)
-        const GLfloat linear = 0.7f / 1.0f;
-        const GLfloat quadratic = 1.8f / 1.0f;
-        pointLight.linear = linear;
-        pointLight.quadratic = quadratic;
-
-        const GLfloat lightThreshold = 5.0; // 5 / 256
-        const GLfloat maxBrightness = std::fmaxf(std::fmaxf(lightColors[i].r, lightColors[i].g), lightColors[i].b);
-        const GLfloat radius = (-linear + static_cast<float>(std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0 / lightThreshold) * maxBrightness)))) / (2 * quadratic);
-        pointLight.radius = radius;
-
-        pointLight.pad1 = 0;
-        pointLight.pad2 = 0;
-        pointLight.pad3 = 0;
-
-        pointLights.push_back(pointLight);
-    }
-
-    glGenBuffers(1, &ssbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PointLight) * pointLights.size(), pointLights.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, ssbo);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-    //*/
+    _lightManager = RfLightManagerGL::getInstance();
+    _lightBulbShader = new RfShaderGL("shader/glsl/light_bulb.vert", "shader/glsl/light_bulb.frag");
+    _lightBulbModel = new RfModelGL("models/sphere/sphere.obj");
+    _lightBulb = new RfObjectGL(_lightBulbModel);
+    _lightBulb->scale(RfPoint3(0.1f, 0.1f, 0.1f));
 
     //*
     const GLuint NR_LIGHTS = 128;
-    srand(3);
+    srand(7);
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
 
         RfPointLight* pointLight = new RfPointLightGL(
@@ -128,7 +71,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         );
 
         GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        GLfloat yPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
+        GLfloat yPos = ((rand() % 100) / 100.0) * 5.0;
         GLfloat zPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
         pointLight->setPosition(RfPoint3(xPos, yPos, zPos));
 
@@ -250,6 +193,7 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
 
     // USE DEFERRED SHADER.
     _deferredShader->use();
+    _currentShader = _deferredShader;
 
     // DRAW OBJECTS.
     for (auto object : objects) {
@@ -291,6 +235,7 @@ void RfCompositorGL::postProcess()
 
     // Use shader
     _displayShader->use();
+    _currentShader = _displayShader;
     //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
     //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
     //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
@@ -307,13 +252,15 @@ void RfCompositorGL::postProcess()
 
     _quad->draw();
 
-    /*
+    //*
     // 2.5. Copy content of geometry's depth buffer to default framebuffer's depth buffer
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _gBuffer->getId());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
     glBlitFramebuffer(0, 0, 1280, 720, 0, 0, 1280, 720, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    */
+    //*/
+    _currentShader = _lightBulbShader;
+    _lightManager->drawLightBulb(_lightBulbShader, _lightBulb);
 
     RF_GL_CHECK_ERROR();
 }

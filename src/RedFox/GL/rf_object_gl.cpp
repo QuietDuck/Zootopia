@@ -41,6 +41,11 @@ RfObjectGL::~RfObjectGL() {}
 void RfObjectGL::setPosition(const RfPoint3& position)
 {
     _position = position;
+
+    _modelMatrix = glm::translate(
+        glm::mat4(1.0f),
+        glm::vec3(position.x, position.y, position.z)
+    );
 }
 
 void RfObjectGL::setRotateAngle(const RfScalar angle)
@@ -61,12 +66,12 @@ void RfObjectGL::setOpacity(const RfScalar opacity)
 void RfObjectGL::draw()
 {
     glUniformMatrix4fv(
-        glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(), "MVP"),
+        glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(), "MVP"),
         1, GL_FALSE,
         glm::value_ptr(RfCompositorGL::_displayCamera->getMatrix() * _modelMatrix));
 
     glUniformMatrix4fv(
-        glGetUniformLocation(RfCompositorGL::_deferredShader->getShaderProgObj(), "M"),
+        glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(), "M"),
         1, GL_FALSE,
         glm::value_ptr(_modelMatrix));
 
