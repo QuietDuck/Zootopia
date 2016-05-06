@@ -19,7 +19,7 @@ namespace zootopia {
 
     public:
 
-        RfSpotLightGL(const RfPoint3& position, const RfVector3& direction, const RfColor& color);
+        explicit RfSpotLightGL(const RfPoint3& position, const RfVector3& direction, const RfColor& color);
         ~RfSpotLightGL();
 
     public:

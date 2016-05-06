@@ -42,6 +42,7 @@ namespace zootopia {
     private:
 
         void _insertLight(RfLight* light) override;
+        void _deleteLight(RfLight* light);
 
         static RfLightManagerGL*    _lightManager;
 

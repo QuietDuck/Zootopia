@@ -36,8 +36,8 @@ namespace zootopia {
     public:
 
         RfObjectGL();
-        RfObjectGL(RfModel* model);
-        RfObjectGL(RfModelGL* model);
+        explicit RfObjectGL(RfModel* model);
+        explicit RfObjectGL(RfModelGL* model);
 
         ~RfObjectGL();
 

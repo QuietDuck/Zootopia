@@ -127,6 +127,9 @@ void RfLightManagerGL::_insertLight(RfLight * light)
 
         RfPointLightGL* pointLight = static_cast<RfPointLightGL*>(light);
         pointLight->_setIndex(_pointLights.size());
+
+        //ZLOG_I("index: %d\n", pointLight->_getIndex());
+            
         _pointLights.push_back(pointLight);
 
         _pointLightBuffer->bind();
@@ -169,8 +172,68 @@ void RfLightManagerGL::_insertLight(RfLight * light)
 
     default:
 
-        ZABORT("Unexpected Process: setLights()");
+        ZABORT("Unexpected Process: _insertLights()");
     }
+}
+
+void RfLightManagerGL::_deleteLight(RfLight * light)
+{
+    switch (light->getType()) {
+
+    case RfLight::Type::kDirectional: {
+
+        RfDirLightGL* dirLight = static_cast<RfDirLightGL*>(light);
+
+        break;
+    }
+
+    case RfLight::Type::kPoint: {
+
+        RfPointLightGL* pointLight = static_cast<RfPointLightGL*>(light);
+
+        // 1. delete vector element.
+        std::vector<RfPointLight*>::const_iterator iter = 
+        _pointLights.begin() + pointLight->_getIndex();
+        iter = _pointLights.erase(iter);
+
+        // 2. delete ssbo data. (append data into ssbo.)
+        _pointLightBuffer->bind();
+        uint32 index = pointLight->_getIndex();
+        for ( ; index < _pointLights.size() ; ++index) {
+           
+            _pointLightBuffer->uploadSubData(
+                sizeof(RfPointLight::Data) * index,
+                sizeof(RfPointLight::Data),
+                &_pointLights[index]->getData()
+            );
+
+            RfPointLightGL* temp = static_cast<RfPointLightGL*>(_pointLights[index]);
+            temp->_setIndex(index);
+        }
+
+        // 3. re-arrange ssbo data. (setRange and reset index.)
+        _pointLightBuffer->setRange(
+            P_LIGHT_BUFFER_INDEX,
+            0,
+            sizeof(RfPointLight::Data) * _pointLights.size()
+        );
+        _pointLightBuffer->unbind();
+
+        break;
+    }
+
+    case RfLight::Type::kSpot: {
+
+        RfSpotLightGL* spotLight = static_cast<RfSpotLightGL*>(light);
+
+        break;
+    }
+
+    default:
+
+        ZABORT("Unexpected Process: _deleteLights()");
+    }
+
 }
 
 

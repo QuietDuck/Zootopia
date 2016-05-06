@@ -40,6 +40,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
     }
     // TO GET RID OF GLFW ERROR. (ERROR CODE: 1280)
+    // There is a GLFW Bug.
     glGetError();
 
     /* Initialize DevIL */
@@ -58,10 +59,11 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
 
     //*
     const GLuint NR_LIGHTS = 64;
+    RfPointLight* pointLight[NR_LIGHTS];
     srand(7);
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
 
-        RfPointLight* pointLight = new RfPointLightGL(
+        pointLight[i] = new RfPointLightGL(
             RfPoint3(0, 0, 0),
             RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF)
         );
@@ -69,7 +71,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         GLfloat xPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
         GLfloat yPos = ((rand() % 100) / 100.0) * 5.0;
         GLfloat zPos = ((rand() % 100) / 100.0) * 10.0 - 5.0;
-        pointLight->setPosition(RfPoint3(xPos, yPos, zPos));
+        pointLight[i]->setPosition(RfPoint3(xPos, yPos, zPos));
 
         GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5;
         GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5;
@@ -78,9 +80,15 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         gColor *= 255;
         bColor *= 255;
         RfColor lightColor = RfColor::make_RGBA32(rColor, gColor, bColor, 0xFF);
-        pointLight->setColor(lightColor);
-        pointLight->setProperties(0.7f, 1.8f);
+        pointLight[i]->setColor(lightColor);
+        pointLight[i]->setProperties(0.7f, 1.8f);
     }
+
+    for (GLuint i = 32; i < NR_LIGHTS; i++) {
+        delete pointLight[i];
+    }
+    //*/
+
     //*/
     /*
     _testLight = new RfPointLightGL(

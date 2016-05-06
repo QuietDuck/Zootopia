@@ -35,13 +35,12 @@ namespace zootopia {
 
     private:
 
-        void    _setIndex(uint32 index) { _values.index = index; }
+        void    _setIndex(const uint32 index) { _values.index = index; }
         uint32  _getIndex() const { return _values.index; }
 
         void    _calculateRadius();
         void    _update(const GLintptr offset, const GLsizeiptr size, const GLvoid* data);
 
-        //RfScalar    _constant;
         RfScalar    _threshold;
         RfScalar    _maxBrightness;
         

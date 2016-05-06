@@ -21,7 +21,7 @@ namespace zootopia {
 
     public:
 
-        RfDirLightGL(const RfVector3& direction, const RfColor& color);
+        explicit RfDirLightGL(const RfVector3& direction, const RfColor& color);
         ~RfDirLightGL();
 
     public:

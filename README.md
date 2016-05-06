@@ -24,6 +24,9 @@ Project Zootopia
 + glfw 3.1.2
 + glm 0.9.7.2
 
+##### Dev Environment
+
++ Visual Studio 2015 Community, Windows 10
 
 ***
 

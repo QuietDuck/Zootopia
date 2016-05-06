@@ -18,7 +18,7 @@ layout (std430, binding = 1) buffer DirLightBuffer
 
 // Point Light
 struct PointLight {
-    vec4 Position; // w is Constant
+    vec4 Position;
     
     float padding;
     float Linear;
@@ -34,7 +34,7 @@ layout (std430, binding = 2) buffer PointLightBuffer
 
 // Spot Light
 struct SpotLight {
-    vec4 Position; // w is Constant
+    vec4 Position;
     vec4 Direction;
     
     float CutOff;
