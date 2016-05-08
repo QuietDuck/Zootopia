@@ -23,13 +23,9 @@ namespace zootopia {
 
     public:
 
-        void destroy();
         void use();
 
-        GLuint getShaderProgObj() const {
-
-            return _shaderProgObj;
-        }
+        GLuint getShaderProgObj() const { return _shaderProgObj; }
 
     private:
 

@@ -9,6 +9,7 @@ RfShaderGL - Implementation
 #include <sstream>
 #include <iostream>
 
+#include "rf_compositor_gl.h"
 #include "rf_state_gl.h"
 
 #define USE_OLD_VERSION 0
@@ -242,7 +243,12 @@ RfShaderGL::RfShaderGL(
     RF_GL_CHECK_ERROR();
 }
 
-RfShaderGL::~RfShaderGL() {}
+RfShaderGL::~RfShaderGL()
+{
+    glDeleteProgram(_shaderProgObj);
+
+    RF_GL_CHECK_ERROR();
+}
 
 void RfShaderGL::_checkCompileErrors(GLuint shader, std::string type)
 {
@@ -273,13 +279,7 @@ void RfShaderGL::_checkCompileErrors(GLuint shader, std::string type)
 void RfShaderGL::use() {
 
     glUseProgram(_shaderProgObj);
-
-    RF_GL_CHECK_ERROR();
-}
-
-void RfShaderGL::destroy() {
-
-    glDeleteProgram(_shaderProgObj);
+    RfCompositorGL::_currentShader = this;
 
     RF_GL_CHECK_ERROR();
 }

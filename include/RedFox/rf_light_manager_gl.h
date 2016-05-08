@@ -44,8 +44,6 @@ namespace zootopia {
         void _insertLight(RfLight* light) override;
         void _deleteLight(RfLight* light);
 
-        static RfLightManagerGL*    _lightManager;
-
         RfShaderStorageBufferGL*    _dirLightBuffer;
         RfShaderStorageBufferGL*    _pointLightBuffer;
         RfShaderStorageBufferGL*    _spotLightBuffer;

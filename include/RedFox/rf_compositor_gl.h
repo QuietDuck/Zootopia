@@ -40,6 +40,7 @@ namespace zootopia {
         friend class RfMeshGL;
         friend class RfObjectGL;
         friend class RfGridGL;
+        friend class RfShaderGL;
         friend class RfLightManagerGL;
 
     public:

@@ -21,7 +21,6 @@ namespace zootopia {
     protected:
 
         std::vector<RfShader*>      _shaders;
-        RfShader*                   _currentShader;
 
     };
 

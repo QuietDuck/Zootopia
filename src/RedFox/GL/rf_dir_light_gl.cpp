@@ -10,8 +10,8 @@ RfDirLightGL - Implementation
 using namespace zootopia;
 
 RfDirLightGL::RfDirLightGL(
-    const RfVector3& direction
-,   const RfColor& color)
+    const RfVector3& direction,
+    const RfColor& color)
 {
     _values.direction = direction;
 

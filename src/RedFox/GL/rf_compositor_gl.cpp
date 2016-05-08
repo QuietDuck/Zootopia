@@ -84,9 +84,9 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         pointLight[i]->setProperties(0.7f, 1.8f);
     }
 
-    for (GLuint i = 32; i < NR_LIGHTS; i++) {
-        delete pointLight[i];
-    }
+    //for (GLuint i = 1; i < NR_LIGHTS; i++) {
+    //    delete pointLight[i];
+    //}
     //*/
 
     //*/
@@ -140,15 +140,12 @@ void RfCompositorGL::destroy()
         _gBuffer->destroy();
     }
     if (_deferredShader) {
-        _deferredShader->destroy();
         ZDELETEZ_SAFE(_deferredShader);
     }
     if (_displayShader) {
-        _displayShader->destroy();
         ZDELETEZ_SAFE(_displayShader);
     }
     if (_hitTestShader) {
-        _hitTestShader->destroy();
         ZDELETEZ_SAFE(_displayShader);
     }
     if (_displayCamera) {
@@ -160,6 +157,9 @@ void RfCompositorGL::destroy()
     }
     if (_quad) {
         ZDELETEZ_SAFE(_quad);
+    }
+    if (_lightManager) {
+        _lightManager->destroy();
     }
     RF_GL_CHECK_ERROR();
 }
@@ -196,7 +196,6 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
 
     // USE DEFERRED SHADER.
     _deferredShader->use();
-    _currentShader = _deferredShader;
 
     // DRAW OBJECTS.
     for (auto object : objects) {
@@ -221,16 +220,10 @@ void RfCompositorGL::renderUserInterface()
     RF_GL_CHECK_ERROR();
 }
 
-static RfScalar lightPos = 1.0f;
 void RfCompositorGL::postProcess()
 {
     ZASSERT(_displayShader);
     ZASSERT(_displayCamera);
-
-    lightPos += 0.05f;
-    if (lightPos >= 7.0f)
-        lightPos = 1.0f;
-    //_testLight->setPosition(RfPoint3(0, lightPos, 0));
 
     // Render output (deferred rendering)
     glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
@@ -238,7 +231,6 @@ void RfCompositorGL::postProcess()
 
     // Use shader
     _displayShader->use();
-    _currentShader = _displayShader;
     //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
     //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
     //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
@@ -310,78 +302,4 @@ void RfCompositorGL::setCamera(RfCamera* camera)
     _displayCamera = static_cast<RfCameraGL*>(camera);
 
     RF_GL_CHECK_ERROR();
-}
-
-// RenderCube() Renders a 1x1 3D cube in NDC.
-GLuint cubeVAO = 0;
-GLuint cubeVBO = 0;
-void RenderCube()
-{
-    // Initialize (if necessary)
-    if (cubeVAO == 0)
-    {
-        GLfloat vertices[] = {
-            // Back face
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // Bottom-left
-            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
-            0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // bottom-right
-            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,  // top-right
-            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,  // bottom-left
-            -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,// top-left
-            // Front face
-            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
-            0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // bottom-right
-            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,  // top-right
-            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
-            -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // top-left
-            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // bottom-left
-            // Left face
-            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
-            -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-left
-            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // bottom-left
-            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
-            -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // bottom-right
-            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
-            // Right face
-            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
-            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
-            0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-right
-            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  // bottom-right
-            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,  // top-left
-            0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-left
-            // Bottom face
-            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
-            0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // top-left
-            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,// bottom-left
-            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
-            -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-right
-            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
-            // Top face
-            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,// top-left
-            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
-            0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // top-right
-            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
-            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,// top-left
-            -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f // bottom-left
-        };
-        glGenVertexArrays(1, &cubeVAO);
-        glGenBuffers(1, &cubeVBO);
-        // Fill buffer
-        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        // Link vertex attributes
-        glBindVertexArray(cubeVAO);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
-    // Render Cube
-    glBindVertexArray(cubeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
 }

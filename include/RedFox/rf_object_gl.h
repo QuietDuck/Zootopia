@@ -49,7 +49,6 @@ namespace zootopia {
         void setOpacity(const RfScalar opacity) override;
 
         void draw() override;
-        void destroy() override;
 
         void translate(const RfPoint3& vector) override;
         void rotate(const RfScalar angle, const RfPoint3& vector) override;

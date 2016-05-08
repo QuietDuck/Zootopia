@@ -37,7 +37,6 @@ namespace zootopia {
         virtual void setOpacity(const RfScalar opacity) = 0;
 
         virtual void draw() = 0;
-        virtual void destroy() = 0;
 
         virtual void translate(const RfPoint3& vector) = 0;
         virtual void rotate(const RfScalar angle, const RfPoint3& vector) = 0;

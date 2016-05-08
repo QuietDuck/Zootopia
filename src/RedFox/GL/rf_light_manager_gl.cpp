@@ -18,7 +18,7 @@ const GLuint P_LIGHT_MAX_NUM = 256;
 const GLuint S_LIGHT_MAX_NUM = 128;
 
 // Single Tone
-RfLightManagerGL* RfLightManagerGL::_lightManager = nullptr;
+static RfLightManagerGL* _lightManager = nullptr;
 
 RfLightManagerGL::RfLightManagerGL() 
 {
@@ -58,9 +58,13 @@ RfLightManagerGL::RfLightManagerGL()
 
 RfLightManagerGL::~RfLightManagerGL()
 {
-    delete _dirLightBuffer;
-    delete _pointLightBuffer;
-    delete _spotLightBuffer;
+    ZDELETEZ_SAFE(_lightBulbShader);
+    ZDELETEZ_SAFE(_lightBulbModel);
+    ZDELETEZ_SAFE(_lightBulb);
+
+    ZDELETEZ_SAFE(_dirLightBuffer);
+    ZDELETEZ_SAFE(_pointLightBuffer);
+    ZDELETEZ_SAFE(_spotLightBuffer);
 }
 
 
@@ -78,14 +82,13 @@ RfLightManagerGL * RfLightManagerGL::getInstance()
 
 void RfLightManagerGL::destroy()
 {
-    delete _lightManager;
+    ZDELETEZ_SAFE(_lightManager);
 }
 
 
 void RfLightManagerGL::drawLightBulb()
 {
     _lightBulbShader->use();
-    RfCompositorGL::_currentShader = _lightBulbShader;
 
     for (auto pointLight : _pointLights) {
         _lightBulb->setPosition(pointLight->getPosition());
@@ -237,6 +240,7 @@ void RfLightManagerGL::_deleteLight(RfLight * light)
         }
 
         // 3. re-arrange ssbo data. (setRange and reset index.)
+        // TODO: fix bug. there is a invalid value error if size is 0.
         _pointLightBuffer->setRange(
             P_LIGHT_BUFFER_INDEX,
             0,

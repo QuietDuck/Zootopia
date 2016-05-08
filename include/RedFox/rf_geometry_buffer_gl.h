@@ -38,8 +38,6 @@ namespace zootopia {
 
     private:
 
-        static RfGeometryBufferGL* _gBuffer;
-
         GLuint  _gBufferFBO;
 
         GLuint  _gPosition;
