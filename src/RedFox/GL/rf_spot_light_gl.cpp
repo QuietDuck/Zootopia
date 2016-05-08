@@ -39,7 +39,11 @@ RfSpotLightGL::RfSpotLightGL(
 }
 
 
-RfSpotLightGL::~RfSpotLightGL() {}
+RfSpotLightGL::~RfSpotLightGL()
+{
+    RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
+    lightManager->_deleteLight(this);
+}
 
 
 void RfSpotLightGL::setPosition(const RfPoint3& position)

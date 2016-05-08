@@ -28,7 +28,8 @@ RfDirLightGL::RfDirLightGL(
 
 RfDirLightGL::~RfDirLightGL()
 {
-
+    RfLightManagerGL* lightManager = RfLightManagerGL::getInstance();
+    lightManager->_deleteLight(this);
 }
 
 void RfDirLightGL::setDirection(const RfVector3& direction)

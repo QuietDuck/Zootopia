@@ -63,6 +63,7 @@ RfLightManagerGL::~RfLightManagerGL()
     delete _spotLightBuffer;
 }
 
+
 RfLightManagerGL * RfLightManagerGL::getInstance()
 {
     if (_lightManager) {
@@ -127,8 +128,6 @@ void RfLightManagerGL::_insertLight(RfLight * light)
 
         RfPointLightGL* pointLight = static_cast<RfPointLightGL*>(light);
         pointLight->_setIndex(_pointLights.size());
-
-        //ZLOG_I("index: %d\n", pointLight->_getIndex());
             
         _pointLights.push_back(pointLight);
 
@@ -176,6 +175,7 @@ void RfLightManagerGL::_insertLight(RfLight * light)
     }
 }
 
+
 void RfLightManagerGL::_deleteLight(RfLight * light)
 {
     switch (light->getType()) {
@@ -183,6 +183,31 @@ void RfLightManagerGL::_deleteLight(RfLight * light)
     case RfLight::Type::kDirectional: {
 
         RfDirLightGL* dirLight = static_cast<RfDirLightGL*>(light);
+
+        std::vector<RfDirLight*>::const_iterator iter =
+            _dirLights.begin() + dirLight->_getIndex();
+        iter = _dirLights.erase(iter);
+
+        _dirLightBuffer->bind();
+        uint32 index = dirLight->_getIndex();
+        for (; index < _dirLights.size(); ++index) {
+
+            _dirLightBuffer->uploadSubData(
+                sizeof(RfDirLight::Data) * index,
+                sizeof(RfDirLight::Data),
+                &_dirLights[index]->getData()
+            );
+
+            RfDirLightGL* temp = static_cast<RfDirLightGL*>(_dirLights[index]);
+            temp->_setIndex(index);
+        }
+
+        _dirLightBuffer->setRange(
+            D_LIGHT_BUFFER_INDEX,
+            0,
+            sizeof(RfDirLight::Data) * _dirLights.size()
+        );
+        _dirLightBuffer->unbind();
 
         break;
     }
@@ -193,13 +218,13 @@ void RfLightManagerGL::_deleteLight(RfLight * light)
 
         // 1. delete vector element.
         std::vector<RfPointLight*>::const_iterator iter = 
-        _pointLights.begin() + pointLight->_getIndex();
+            _pointLights.begin() + pointLight->_getIndex();
         iter = _pointLights.erase(iter);
 
         // 2. delete ssbo data. (append data into ssbo.)
         _pointLightBuffer->bind();
         uint32 index = pointLight->_getIndex();
-        for ( ; index < _pointLights.size() ; ++index) {
+        for ( ; index < _pointLights.size(); ++index) {
            
             _pointLightBuffer->uploadSubData(
                 sizeof(RfPointLight::Data) * index,
@@ -225,6 +250,31 @@ void RfLightManagerGL::_deleteLight(RfLight * light)
     case RfLight::Type::kSpot: {
 
         RfSpotLightGL* spotLight = static_cast<RfSpotLightGL*>(light);
+
+        std::vector<RfSpotLight*>::const_iterator iter =
+            _spotLights.begin() + spotLight->_getIndex();
+        iter = _spotLights.erase(iter);
+
+        _spotLightBuffer->bind();
+        uint32 index = spotLight->_getIndex();
+        for (; index < _pointLights.size(); ++index) {
+
+            _spotLightBuffer->uploadSubData(
+                sizeof(RfSpotLight::Data) * index,
+                sizeof(RfSpotLight::Data),
+                &_spotLights[index]->getData()
+            );
+
+            RfSpotLightGL* temp = static_cast<RfSpotLightGL*>(_spotLights[index]);
+            temp->_setIndex(index);
+        }
+
+        _spotLightBuffer->setRange(
+            S_LIGHT_BUFFER_INDEX,
+            0,
+            sizeof(RfSpotLight::Data) * _spotLights.size()
+        );
+        _spotLightBuffer->unbind();
 
         break;
     }
