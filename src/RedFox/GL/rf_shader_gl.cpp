@@ -155,6 +155,8 @@ RfShaderGL::RfShaderGL(
     ZASSERT(vertexPath);
     ZASSERT(fragmentPath);
 
+    ZLOG_P("compile %s", vertexPath);
+
     // 1. Retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -260,7 +262,7 @@ void RfShaderGL::_checkCompileErrors(GLuint shader, std::string type)
         if (!success)
         {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "| ERROR::::SHADER-COMPILATION-ERROR of type: " << type << "|\n" << infoLog << "\n|-------------------------------------------------------|" << std::endl;
+            std::cout << "| ERROR::::SHADER-COMPILATION-ERROR of type: " << type << "|\n" << infoLog << "\n|------------------------------------------------|" << std::endl;
         }
     }
     else
@@ -269,7 +271,7 @@ void RfShaderGL::_checkCompileErrors(GLuint shader, std::string type)
         if (!success)
         {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::cout << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n" << infoLog << "\n|-------------------------------------------------------|" << std::endl;
+            std::cout << "| ERROR::::PROGRAM-LINKING-ERROR of type: " << type << "|\n" << infoLog << "\n|------------------------------------------------|" << std::endl;
         }
     }
 

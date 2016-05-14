@@ -79,9 +79,10 @@ void RfObjectGL::draw()
         glm::value_ptr(RfCompositorGL::_displayCamera->getMatrix() * _modelMatrix));
 
     glUniformMatrix4fv(
-        glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(), "M"),
+        glGetUniformLocation(RfCompositorGL::_currentShader->getShaderProgObj(), "MV"),
         1, GL_FALSE,
         glm::value_ptr(_modelMatrix));
+        //glm::value_ptr(RfCompositorGL::_displayCamera->getViewMatrix() * _modelMatrix));
 
     _model->draw();
 

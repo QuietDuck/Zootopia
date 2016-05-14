@@ -2,9 +2,10 @@
 out vec4 FragColor;
 in vec2 TexCoords;
 
-uniform sampler2D gPosition;
+uniform sampler2D gPositionDepth;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoSpec;
+uniform sampler2D ssao;
 
 // Directional Light
 struct DirLight {
@@ -56,13 +57,15 @@ uniform vec3 viewPos;
 void main()
 {             
     // Retrieve data from gbuffer
-    vec3 FragPos = texture(gPosition, TexCoords).rgb;
+    vec3 FragPos = texture(gPositionDepth, TexCoords).xyz;
     vec3 Normal = texture(gNormal, TexCoords).rgb;
     vec3 Diffuse = texture(gAlbedoSpec, TexCoords).rgb;
     float Specular = texture(gAlbedoSpec, TexCoords).a;
+    float AmbientOcclusion = texture(ssao, TexCoords).r;
     
     // Then calculate lighting as usual
-    vec3 lighting  = Diffuse * 0.1; // hard-coded ambient component
+    //vec3 lighting  = Diffuse * vec3(0.3 * AmbientOcclusion);
+    vec3 lighting  = Diffuse * 0.1;
     vec3 viewDir  = normalize(viewPos - FragPos);
     
     // Calculate Directional Lights
@@ -133,4 +136,5 @@ void main()
     //FragColor = vec4(Normal, 1.0);
     //FragColor = vec4(Diffuse, 1.0);
     //FragColor = vec4(vec3(Specular), 1.0);
+    //FragColor = vec4(vec3(AmbientOcclusion), 1.0);
 }

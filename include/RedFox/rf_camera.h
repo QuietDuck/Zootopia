@@ -38,8 +38,6 @@ namespace zootopia {
 
     protected:
 
-        virtual void updateVectors() = 0;
-
         // Eular Angles
         RfScalar    _yaw;
         RfScalar    _pitch;

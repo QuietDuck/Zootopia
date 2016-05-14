@@ -40,12 +40,14 @@ namespace zootopia {
         void processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool constrainPitch = true) override;
         void processMouseScroll(RfScalar yoffset) override;
 
-        glm::mat4 getMatrix() const { return _projMatrix * _viewMatrix; };
+        glm::mat4 getMatrix() const { return _projMatrix * _viewMatrix; }
+        glm::mat4 getViewMatrix() const { return _viewMatrix; }
+        glm::mat4 getProjMatrix() const { return _projMatrix; }
         glm::vec3 getPosition() const { return _position; }
 
     private:
 
-        void updateVectors() override;
+        void _updateVectors();
 
         // Camera Attributes
         glm::vec3   _position;

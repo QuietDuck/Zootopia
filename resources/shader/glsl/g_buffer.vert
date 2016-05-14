@@ -13,17 +13,19 @@ out VS_OUT {
 } vs_out;
 
 uniform mat4 MVP;
+uniform mat4 MV;
 uniform mat4 M;
 
 void main()
 {
     gl_Position = MVP * position;
     
-    vec4 _fragPos = M * position;
+    vec4 _fragPos = MV * position;
     vs_out.FragPos = _fragPos.xyz;
     vs_out.TexCoords = texcoords;
 
-    mat3 normalMatrix = transpose(inverse(mat3(M)));
+    // This is not good. we should precalculate normalMatrix.
+    mat3 normalMatrix = transpose(inverse(mat3(MV)));
     vs_out.Normal = normalMatrix * normal;
     
     vec3 T = normalize(normalMatrix * tangent);

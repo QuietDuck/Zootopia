@@ -21,7 +21,7 @@ BcResourceManager::~BcResourceManager() {}
 
 void BcResourceManager::initialize()
 {
-
+    //ZABORT_NOT_IMPLEMENTED();
 }
 
 
@@ -32,6 +32,7 @@ void BcResourceManager::loadModelFromFile(const std::string &filePath)
     RfModel* testModel2 = new RfModelGL("models/judy/judy.3ds");
     RfModel* testModel3 = new RfModelGL("models/nanosuit/nanosuit.obj");
     RfModel* testModel4 = new RfModelGL("models/floor/floor.obj");
+    //RfModel* testModel5 = new RfModelGL("models/sponza/sponza.obj");
 
     _models.push_back(testModel1);
     _models.push_back(testModel2);
@@ -56,11 +57,12 @@ void BcResourceManager::loadModelFromFile(const std::string &filePath)
     testObject3->rotate(-45, RfPoint3(0, 1, 0));
 
     RfObject* testObject4 = new RfObjectGL(testModel4);
-    testObject4->scale(RfPoint3(5.0f, 1.0f, 5.0f));
-    
-    _objects.push_back(testObject1);
-    _objects.push_back(testObject2);
-    _objects.push_back(testObject3);
+    testObject4->scale(RfPoint3(5.0f, 5.0f, 5.0f));
+    //testObject4->rotate(180, RfPoint3(0, 0, 1));
+
+    //_objects.push_back(testObject1);
+    //_objects.push_back(testObject2);
+    //_objects.push_back(testObject3);
 
     _objects.push_back(testObject4);
 }
@@ -80,7 +82,7 @@ void BcResourceManager::loadImagesFromDir(const std::string &dirPath)
 
 void BcResourceManager::prepare()
 {
-
+    ZABORT_NOT_IMPLEMENTED();
 }
 
 

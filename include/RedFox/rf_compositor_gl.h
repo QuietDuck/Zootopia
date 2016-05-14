@@ -30,6 +30,7 @@
 #include "rf_shader_gl.h"
 #include "rf_quad_gl.h"
 #include "rf_geometry_buffer_gl.h"
+#include "rf_ssao_gl.h"
 
 namespace zootopia {
 
@@ -42,6 +43,7 @@ namespace zootopia {
         friend class RfGridGL;
         friend class RfShaderGL;
         friend class RfLightManagerGL;
+        friend class RfSSAOGL;
 
     public:
 
@@ -103,6 +105,9 @@ namespace zootopia {
         RfSpotLight*        _testLightB;
 
         RfLightManagerGL*   _lightManager;
+
+        // SSAO
+        RfSSAOGL*   _ssao;
 
     };
 

@@ -22,16 +22,12 @@ namespace zootopia {
     public:
 
         static RfQuadBufferGL* getBuffer();
-
-        void initialize(); //?
         void destroy();
 
         void bind();
         void unbind();
 
     private:
-
-        static RfQuadBufferGL* _quadBuffer;
 
         GLuint  _quadVAO;
         GLuint  _quadVBO;

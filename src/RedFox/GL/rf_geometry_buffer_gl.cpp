@@ -13,13 +13,13 @@ static RfGeometryBufferGL* _gBuffer = nullptr;
 
 RfGeometryBufferGL::RfGeometryBufferGL() :
     _gBufferFBO(GL_NONE)
-,   _gPosition(GL_NONE)
+,   _gPositionDepth(GL_NONE)
 ,   _gNormal(GL_NONE)
 ,   _gAlbedoSpec(GL_NONE)
 ,   _rboDepth(GL_NONE)
 {
     glGenFramebuffers(1, &_gBufferFBO);
-    glGenTextures(1, &_gPosition);
+    glGenTextures(1, &_gPositionDepth);
     glGenTextures(1, &_gNormal);
     glGenTextures(1, &_gAlbedoSpec);
     glGenRenderbuffers(1, &_rboDepth);
@@ -31,8 +31,8 @@ RfGeometryBufferGL::~RfGeometryBufferGL()
 {
     if (_rboDepth NEQ GL_NONE)
         glDeleteRenderbuffers(1, &_rboDepth);
-    if (_gPosition NEQ GL_NONE)
-        glDeleteTextures(1, &_gPosition);
+    if (_gPositionDepth NEQ GL_NONE)
+        glDeleteTextures(1, &_gPositionDepth);
     if (_gNormal NEQ GL_NONE)
         glDeleteTextures(1, &_gNormal);
     if (_gAlbedoSpec NEQ GL_NONE)
@@ -61,11 +61,13 @@ void RfGeometryBufferGL::initialize(const RfSize& fboSize)
 
     glBindFramebuffer(GL_FRAMEBUFFER, _gBufferFBO);
     // - Position color buffer
-    glBindTexture(GL_TEXTURE_2D, _gPosition);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+    glBindTexture(GL_TEXTURE_2D, _gPositionDepth);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _gPosition, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _gPositionDepth, 0);
     // - Normal color buffer
     glBindTexture(GL_TEXTURE_2D, _gNormal);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
@@ -97,6 +99,8 @@ void RfGeometryBufferGL::initialize(const RfSize& fboSize)
 
 void RfGeometryBufferGL::resize(const RfSize& fboSize)
 {
+    ZABORT_NOT_IMPLEMENTED();
+
     RF_GL_CHECK_ERROR();
 }
 

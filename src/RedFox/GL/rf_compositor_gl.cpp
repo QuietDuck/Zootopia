@@ -27,7 +27,9 @@ RfCompositorGL::RfCompositorGL() :
     _gBuffer(nullptr)
 {}
 
+
 RfCompositorGL::~RfCompositorGL() {}
+
 
 void RfCompositorGL::initialize(const RfSize& fboSize)
 {
@@ -57,8 +59,11 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
 
     _lightManager = RfLightManagerGL::getInstance();
 
+    _ssao = RfSSAOGL::getInstance();
+    _ssao->initialize(fboSize);
+
     //*
-    const GLuint NR_LIGHTS = 64;
+    const GLuint NR_LIGHTS = 32;
     RfPointLight* pointLight[NR_LIGHTS];
     srand(7);
     for (GLuint i = 0; i < NR_LIGHTS; i++) {
@@ -81,7 +86,8 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         bColor *= 255;
         RfColor lightColor = RfColor::make_RGBA32(rColor, gColor, bColor, 0xFF);
         pointLight[i]->setColor(lightColor);
-        pointLight[i]->setProperties(0.7f, 1.8f);
+        //pointLight[i]->setProperties(0.7f, 1.8f);
+        pointLight[i]->setProperties(0.22f, 0.20f);
     }
 
     //for (GLuint i = 1; i < NR_LIGHTS; i++) {
@@ -93,18 +99,19 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     /*
     _testLight = new RfPointLightGL(
         RfPoint3(0, 4, 0),
+        //RfColor::make_RGBA32(0x33, 0x33, 0xB2, 0xFF)
         RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF)
     );
-    _testLight->setProperties(0.7f/100.0f, 1.8f/100.0f);
+    _testLight->setProperties(0.09f, 0.032f);
     //*/
     //*
     _testLight2 = new RfDirLightGL(
-        RfVector3(0, -1, 0),
-        RfColor::make_RGBA32(0x1F, 0x1F, 0x1F, 0xFF)
+        RfVector3(-1, -1, 0),
+        RfColor::make_RGBA32(0x2F, 0x2F, 0x2F, 0xFF)
     );
     //*/
 
-    //*
+    /*
     _testLightR = new RfSpotLightGL(
         RfPoint3(1, 8, 1),
         RfVector3(0, -1, 0),
@@ -125,6 +132,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     //*/
 }
 
+
 void RfCompositorGL::resize(const RfSize & fboSize)
 {
     ZABORT_NOT_IMPLEMENTED();
@@ -132,6 +140,7 @@ void RfCompositorGL::resize(const RfSize & fboSize)
     // Resize FBO and viewport.
     RF_GL_CHECK_ERROR();
 }
+
 
 void RfCompositorGL::destroy()
 {
@@ -158,11 +167,11 @@ void RfCompositorGL::destroy()
     if (_quad) {
         ZDELETEZ_SAFE(_quad);
     }
-    if (_lightManager) {
-        _lightManager->destroy();
-    }
+    _lightManager->destroy();
+    _ssao->destroy();
     RF_GL_CHECK_ERROR();
 }
+
 
 void RfCompositorGL::prepareFrame(const RfSize& frameSize)
 {
@@ -180,6 +189,7 @@ void RfCompositorGL::prepareFrame(const RfSize& frameSize)
 
     RF_GL_CHECK_ERROR();
 }
+
 
 void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
 {
@@ -205,8 +215,11 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
 
     _gBuffer->unbind(); // for safety.
 
+    //_ssao->draw();
+
     RF_GL_CHECK_ERROR();
 }
+
 
 void RfCompositorGL::renderHitTest()
 {
@@ -214,11 +227,13 @@ void RfCompositorGL::renderHitTest()
     RF_GL_CHECK_ERROR();
 }
 
+
 void RfCompositorGL::renderUserInterface()
 {
     // render user interface (ui, font, etc...)
     RF_GL_CHECK_ERROR();
 }
+
 
 void RfCompositorGL::postProcess()
 {
@@ -237,11 +252,13 @@ void RfCompositorGL::postProcess()
 
     // RENDER OUTPUT (QUAD TEXTURE)
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _gBuffer->getPositionOutputTextureID());
+    glBindTexture(GL_TEXTURE_2D, _gBuffer->getPositionDepthOutputTextureID());
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _gBuffer->getNormalOutputTextureID());
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, _gBuffer->getAlbedoSpecOutputTextureID());
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, _ssao->getOutputTextureID());
 
     glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), "viewPos"), 1, glm::value_ptr(_displayCamera->getPosition()));
 
@@ -280,9 +297,10 @@ void RfCompositorGL::setShader(RfShader* shader)
 
     /// TEMPORARY... 
     _displayShader->use();
-    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
+    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPositionDepth"), 0);
     glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
     glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
+    glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "ssao"), 3);
 
     /*
     GLuint block_index = 0;

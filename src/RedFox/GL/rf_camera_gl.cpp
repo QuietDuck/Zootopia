@@ -18,7 +18,7 @@ RfCameraGL::RfCameraGL(
     _worldUp = worldUp;
     _yaw = yaw;
     _pitch = pitch;
-    updateVectors();
+    _updateVectors();
 
     _viewMatrix = glm::lookAt(_position, _position + _front, _up);
     _projMatrix = glm::perspective(_zoom, 1280.0f / 720.0f, 0.1f, 100.0f);
@@ -70,7 +70,7 @@ void RfCameraGL::processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool c
     }
 
     // Update Front, Right and Up Vectors using the updated Eular angles
-    updateVectors();
+    _updateVectors();
 
     _viewMatrix = glm::lookAt(_position, _position + _front, _up);
 }
@@ -86,10 +86,10 @@ void RfCameraGL::processMouseScroll(RfScalar yoffset)
     if (_zoom >= 45.0f)
         _zoom = 45.0f;
 
-    _projMatrix = glm::perspective(glm::radians(_zoom), 1280.0f / 720.0f, 0.1f, 100.0f);
+    _projMatrix = glm::perspective(glm::radians(_zoom), 1280.0f / 720.0f, 0.1f, 50.0f);
 }
 
-void RfCameraGL::updateVectors()
+void RfCameraGL::_updateVectors()
 {
     // Calculate the new Front vector
     glm::vec3 front;

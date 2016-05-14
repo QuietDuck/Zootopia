@@ -4,8 +4,6 @@ RfSpotLightGL - Implementation
 #include "rf_spot_light_gl.h"
 #include "zpd.h"
 
-#include <glm/glm.hpp>
-
 #include "rf_light_manager_gl.h"
 #include "rf_state_gl.h"
 

@@ -32,7 +32,7 @@ namespace zootopia {
         void unbind();
 
         GLuint getId() const { return _gBufferFBO; }
-        GLuint getPositionOutputTextureID() const { return _gPosition; }
+        GLuint getPositionDepthOutputTextureID() const { return _gPositionDepth; }
         GLuint getNormalOutputTextureID() const { return _gNormal; }
         GLuint getAlbedoSpecOutputTextureID() const { return _gAlbedoSpec; }
 
@@ -40,7 +40,7 @@ namespace zootopia {
 
         GLuint  _gBufferFBO;
 
-        GLuint  _gPosition;
+        GLuint  _gPositionDepth;
         GLuint  _gNormal;
         GLuint  _gAlbedoSpec;
 

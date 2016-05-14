@@ -11,7 +11,7 @@ RfQuadBufferGL - Implementation.
 using namespace zootopia;
 
 // SINGLE-TONE CLASS
-RfQuadBufferGL* RfQuadBufferGL::_quadBuffer = nullptr;
+static RfQuadBufferGL* _quadBuffer = nullptr;
 
 RfQuadBufferGL::RfQuadBufferGL() :
     _quadVAO(GL_NONE)
@@ -42,31 +42,18 @@ RfQuadBufferGL::RfQuadBufferGL() :
 }
 
 
-RfQuadBufferGL::~RfQuadBufferGL() {}
-
-
-void RfQuadBufferGL::initialize()
+RfQuadBufferGL::~RfQuadBufferGL()
 {
+    glDeleteBuffers(1, &_quadVBO);
+    glDeleteVertexArrays(1, &_quadVAO);
+
     RF_GL_CHECK_ERROR();
 }
 
 
 void RfQuadBufferGL::destroy()
 {
-    if (_quadVAO NEQ GL_NONE) {
-        glDeleteVertexArrays(1, &_quadVAO);
-    }
-
-    if (_quadVBO NEQ GL_NONE) {
-        glDeleteBuffers(1, &_quadVBO);
-    }
-
-    // DELETE ITSELF?
-    if (_quadBuffer) {
-        ZDELETEZ_SAFE(_quadBuffer);
-    }
-
-    RF_GL_CHECK_ERROR();
+    ZDELETEZ_SAFE(_quadBuffer);
 }
 
 
