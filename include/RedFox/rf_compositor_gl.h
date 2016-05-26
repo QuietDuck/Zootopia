@@ -31,6 +31,7 @@
 #include "rf_quad_gl.h"
 #include "rf_geometry_buffer_gl.h"
 #include "rf_ssao_gl.h"
+#include "rf_skybox_gl.h"
 
 namespace zootopia {
 
@@ -38,12 +39,14 @@ namespace zootopia {
 
         // IS THIS GOOD? NOPE.
         // FOR _displayCamera, _deferredShader.
+        /// TEMPORARY.
         friend class RfMeshGL;
         friend class RfObjectGL;
         friend class RfGridGL;
         friend class RfShaderGL;
         friend class RfLightManagerGL;
         friend class RfSSAOGL;
+        friend class RfSkyboxGL;
 
     public:
 
@@ -108,6 +111,9 @@ namespace zootopia {
 
         // SSAO
         RfSSAOGL*   _ssao;
+
+        // Skybox
+        RfSkyboxGL* _skybox;
 
     };
 

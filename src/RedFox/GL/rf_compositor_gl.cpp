@@ -62,6 +62,8 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     _ssao = RfSSAOGL::getInstance();
     _ssao->initialize(fboSize);
 
+    _skybox = new RfSkyboxGL;
+
     //*
     const GLuint NR_LIGHTS = 32;
     RfPointLight* pointLight[NR_LIGHTS];
@@ -86,8 +88,8 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
         bColor *= 255;
         RfColor lightColor = RfColor::make_RGBA32(rColor, gColor, bColor, 0xFF);
         pointLight[i]->setColor(lightColor);
-        //pointLight[i]->setProperties(0.7f, 1.8f);
-        pointLight[i]->setProperties(0.22f, 0.20f);
+        pointLight[i]->setProperties(0.7f, 1.8f);
+        //pointLight[i]->setProperties(0.22f, 0.20f);
     }
 
     //for (GLuint i = 1; i < NR_LIGHTS; i++) {
@@ -96,9 +98,9 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     //*/
 
     //*/
-    /*
+    //*
     _testLight = new RfPointLightGL(
-        RfPoint3(0, 4, 0),
+        RfPoint3(0, 4, 2),
         //RfColor::make_RGBA32(0x33, 0x33, 0xB2, 0xFF)
         RfColor::make_RGBA32(0xFF, 0xFF, 0xFF, 0xFF)
     );
@@ -107,7 +109,7 @@ void RfCompositorGL::initialize(const RfSize& fboSize)
     //*
     _testLight2 = new RfDirLightGL(
         RfVector3(-1, -1, 0),
-        RfColor::make_RGBA32(0x2F, 0x2F, 0x2F, 0xFF)
+        RfColor::make_RGBA32(0x9F, 0x9F, 0x9F, 0xFF)
     );
     //*/
 
@@ -183,8 +185,8 @@ void RfCompositorGL::prepareFrame(const RfSize& frameSize)
     // IT IS NESSESARY.
     glEnable(GL_DEPTH_TEST);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearDepth(1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    //glClearDepth(1.0f);
     glClearStencil(0);
 
     RF_GL_CHECK_ERROR();
@@ -210,7 +212,7 @@ void RfCompositorGL::renderDisplay(const std::vector<RfObject*> &objects)
     // DRAW OBJECTS.
     for (auto object : objects) {
         //object->rotate(0.5f, RfPoint3(0, 1, 0));
-        object->draw();
+        //object->draw();
     }
 
     _gBuffer->unbind(); // for safety.
@@ -242,13 +244,13 @@ void RfCompositorGL::postProcess()
 
     // Render output (deferred rendering)
     glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
+    //glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
 
     // Use shader
     _displayShader->use();
-    //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gPosition"), 0);
-    //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gNormal"), 1);
-    //glUniform1i(glGetUniformLocation(_displayShader->getShaderProgObj(), "gAlbedoSpec"), 2);
 
     // RENDER OUTPUT (QUAD TEXTURE)
     glActiveTexture(GL_TEXTURE0);
@@ -262,16 +264,20 @@ void RfCompositorGL::postProcess()
 
     glUniform3fv(glGetUniformLocation(_displayShader->getShaderProgObj(), "viewPos"), 1, glm::value_ptr(_displayCamera->getPosition()));
 
-    _quad->draw();
+    //_quad->draw();
 
     //*
     // Copy content of geometry's depth buffer to default framebuffer's depth buffer
     glBindFramebuffer(GL_READ_FRAMEBUFFER, _gBuffer->getId());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // Write to default framebuffer
     glBlitFramebuffer(0, 0, 1280, 720, 0, 0, 1280, 720, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
     //*/
 
+    // draw skybox
+    _skybox->draw();
+
+    // draw lightBulb(for debugging)
     _lightManager->drawLightBulb();
 
     RF_GL_CHECK_ERROR();

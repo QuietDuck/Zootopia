@@ -25,7 +25,7 @@ namespace zootopia {
         void destroy();
 
         void bind();
-        void unbind();
+        static void unbind();
 
     private:
 
