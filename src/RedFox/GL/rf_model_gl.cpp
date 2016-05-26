@@ -175,6 +175,15 @@ RfMeshGL* RfModelGL::processMesh(aiMesh* mesh, const aiScene* scene)
         material->Get(AI_MATKEY_COLOR_EMISSIVE, mat.emission);
         mat.shininess = 0.4f;
         mat.strength = 128.0f;
+
+        /*
+        std::cout << "mesh start" << std::endl;
+        std::cout << "ambient: " << mat.ambient.r << " " << mat.ambient.g << " " << mat.ambient.b << std::endl;
+        std::cout << "diffuse: " << mat.diffuse.r << " " << mat.diffuse.g << " " << mat.diffuse.b << std::endl;
+        std::cout << "specular: " << mat.specular.r << " " << mat.specular.g << " " << mat.specular.b << std::endl;
+        std::cout << "emission: " << mat.emission.r << " " << mat.emission.g << " " << mat.emission.b << std::endl;
+        std::cout << "mesh end" << std::endl;
+        */
     }
 
     RfMeshGL* meshGL = new RfMeshGL(vertices, indices, textures, mat);

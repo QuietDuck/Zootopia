@@ -49,7 +49,7 @@ void main()
          _normal = normalize(_normal * 2.0 - 1.0) * fs_in.TBN;
         //_normal = normalize(_normal * 2.0 - 1.0);
         //_normal = normalize(_normal) * fs_in.TBN;
-        _normal.z = -_normal.z;
+        //_normal.z = -_normal.z;
     }
        
     gNormal = _normal;

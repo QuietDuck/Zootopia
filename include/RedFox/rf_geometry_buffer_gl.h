@@ -10,7 +10,6 @@ RfGeometryBufferGL - Class
 #include <GL/glew.h>
 
 #include "rf_size.h"
-#include "rf_frame_buffer_gl.h"
 
 namespace zootopia {
 
@@ -32,14 +31,14 @@ namespace zootopia {
         void bind();
         void unbind();
 
-        GLuint getId() const { return _gBufferFBO.getId(); }
+        GLuint getId() const { return _gBufferFBO; }
         GLuint getPositionDepthOutputTextureID() const { return _gPositionDepth; }
         GLuint getNormalOutputTextureID() const { return _gNormal; }
         GLuint getAlbedoSpecOutputTextureID() const { return _gAlbedoSpec; }
 
     private:
 
-        RfFrameBufferGL _gBufferFBO;
+        GLuint  _gBufferFBO;
 
         GLuint  _gPositionDepth;
         GLuint  _gNormal;

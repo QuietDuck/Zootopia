@@ -77,7 +77,7 @@ void RfCameraGL::processMouseMovement(RfScalar xoffset, RfScalar yoffset, bool c
 
 void RfCameraGL::processMouseScroll(RfScalar yoffset)
 {
-    ZLOG_I("Zoom: %f", _zoom);
+    std::cout << _zoom << std::endl;
 
     if (_zoom >= 1.0f AND _zoom <= 45.0f)
         _zoom -= yoffset;

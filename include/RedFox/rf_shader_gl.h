@@ -19,7 +19,6 @@ namespace zootopia {
     public:
 
         explicit RfShaderGL(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath = nullptr);
-        //explicit RfShaderGL(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath = nullptr);
         ~RfShaderGL();
 
     public:

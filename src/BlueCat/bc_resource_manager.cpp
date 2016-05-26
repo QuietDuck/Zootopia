@@ -32,7 +32,6 @@ void BcResourceManager::loadModelFromFile(const std::string &filePath)
     RfModel* testModel2 = new RfModelGL("models/judy/judy.3ds");
     RfModel* testModel3 = new RfModelGL("models/nanosuit/nanosuit.obj");
     RfModel* testModel4 = new RfModelGL("models/floor/floor.obj");
-    //RfModel* testModel4 = new RfModelGL("models/tropical/tropical.obj");
     //RfModel* testModel5 = new RfModelGL("models/sponza/sponza.obj");
 
     _models.push_back(testModel1);
