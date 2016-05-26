@@ -12,13 +12,11 @@ using namespace zootopia;
 static RfGeometryBufferGL* _gBuffer = nullptr;
 
 RfGeometryBufferGL::RfGeometryBufferGL() :
-    _gBufferFBO(GL_NONE)
-,   _gPositionDepth(GL_NONE)
+    _gPositionDepth(GL_NONE)
 ,   _gNormal(GL_NONE)
 ,   _gAlbedoSpec(GL_NONE)
 ,   _rboDepth(GL_NONE)
 {
-    glGenFramebuffers(1, &_gBufferFBO);
     glGenTextures(1, &_gPositionDepth);
     glGenTextures(1, &_gNormal);
     glGenTextures(1, &_gAlbedoSpec);
@@ -37,8 +35,6 @@ RfGeometryBufferGL::~RfGeometryBufferGL()
         glDeleteTextures(1, &_gNormal);
     if (_gAlbedoSpec NEQ GL_NONE)
         glDeleteTextures(1, &_gAlbedoSpec);
-    if (_gBufferFBO NEQ GL_NONE)
-        glDeleteFramebuffers(1, &_gBufferFBO);
 
     RF_GL_CHECK_ERROR();
 }
@@ -59,8 +55,8 @@ void RfGeometryBufferGL::initialize(const RfSize& fboSize)
     const GLsizei width = RfScalarTruncToInt(fboSize.w);
     const GLsizei height = RfScalarTruncToInt(fboSize.h);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, _gBufferFBO);
-    // - Position color buffer
+    _gBufferFBO.bind();
+    // Position color buffer
     glBindTexture(GL_TEXTURE_2D, _gPositionDepth);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -68,31 +64,31 @@ void RfGeometryBufferGL::initialize(const RfSize& fboSize)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _gPositionDepth, 0);
-    // - Normal color buffer
+    // Normal color buffer
     glBindTexture(GL_TEXTURE_2D, _gNormal);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, _gNormal, 0);
-    // - Color + Specular color buffer
+    // Color + Specular color buffer
     glBindTexture(GL_TEXTURE_2D, _gAlbedoSpec);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, _gAlbedoSpec, 0);
 
-    // - Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
+    // Tell OpenGL which color attachments we'll use (of this framebuffer) for rendering
     GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(3, attachments);
 
-    // - Create and attach depth buffer (renderbuffer)
+    // Create and attach depth buffer (renderbuffer)
     glBindRenderbuffer(GL_RENDERBUFFER, _rboDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _rboDepth);
-    // - Finally check if framebuffer is complete
+    // Finally check if framebuffer is complete
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         ZLOG_E("Framebuffer not complete!");
-    glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+    _gBufferFBO.unbind();
 
     RF_GL_CHECK_ERROR();
 }
@@ -111,15 +107,11 @@ void RfGeometryBufferGL::destroy()
 
 void RfGeometryBufferGL::bind()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, _gBufferFBO);
-
-    RF_GL_CHECK_ERROR();
+    _gBufferFBO.bind();
 }
 
 void RfGeometryBufferGL::unbind()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-
-    RF_GL_CHECK_ERROR();
+    _gBufferFBO.unbind();
 }
 

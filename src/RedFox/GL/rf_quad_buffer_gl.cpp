@@ -51,6 +51,18 @@ RfQuadBufferGL::~RfQuadBufferGL()
 }
 
 
+RfQuadBufferGL* RfQuadBufferGL::getBuffer()
+{
+    if (_quadBuffer) {
+        return _quadBuffer;
+    }
+    else {
+        _quadBuffer = new RfQuadBufferGL;
+        return _quadBuffer;
+    }
+}
+
+
 void RfQuadBufferGL::destroy()
 {
     ZDELETEZ_SAFE(_quadBuffer);
@@ -65,21 +77,9 @@ void RfQuadBufferGL::bind()
 }
 
 
-void zootopia::RfQuadBufferGL::unbind()
+void RfQuadBufferGL::unbind()
 {
     glBindVertexArray(GL_NONE);
 
     RF_GL_CHECK_ERROR();
-}
-
-
-RfQuadBufferGL* RfQuadBufferGL::getBuffer()
-{
-    if (_quadBuffer) {
-        return _quadBuffer;
-    }
-    else {
-        _quadBuffer = new RfQuadBufferGL;
-        return _quadBuffer;
-    }
 }

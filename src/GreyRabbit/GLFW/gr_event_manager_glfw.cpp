@@ -64,13 +64,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 void character_callback(GLFWwindow* window, unsigned int codepoint)
 {
-    // NOT IMPLEMENTED YET.
+    
 }
 
 
 void charmods_callback(GLFWwindow* window, unsigned int codepoint, int mods)
 {
-    // NOT IMPLEMENTED YET.
+    
 }
 ///////////
 
